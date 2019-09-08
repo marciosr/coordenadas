@@ -8,10 +8,7 @@ use regex::Regex;
 use std::fs;
 use std::string::String;
 use csv::*;
-
-//use std::path::Path;
 use std::path::PathBuf;
-//use std::ffi::OsStr;
 
 pub struct MainWindow {
 	pub glade: Builder,
@@ -66,7 +63,6 @@ impl MainWindow {
 			if Dados::check(&btfs1, &btfs2, &ent_express1_clone, &ent_express2_clone, &ent_saida_clone, &revealer_clone, &label2_clone) {
 
 			 	let dados = Dados::new(&btfs1, &btfs2, &ent_express1_clone, &ent_express2_clone, &ent_saida_clone);
-
 			 	let texto = fs::read_to_string(&dados.uri_entrada);
 
 			 	match texto {
@@ -225,8 +221,4 @@ impl Dados {
 
 		resultado
 	}
-}
-#[allow(unused)]
-fn check_utf8 (uri1: PathBuf) {
-
 }
