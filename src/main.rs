@@ -127,6 +127,8 @@ fn analisa_memorial (uri_entrada: PathBuf, uri_saida: PathBuf, expressao_n: Stri
     	vetor2.push(&text[start..end]);
     }
 
+	// TODO: Verificar a possibilidade de fazer uma função específicamente para remover os pontos, ou outros caracteres quando necessário.
+
 	let mut vetor3 = Vec::with_capacity(VEC_SIZE);
     for x in vetor1.iter_mut() {
     	vetor3.push(x.replace(".",""));
@@ -162,7 +164,6 @@ struct Dados {
 	pub expressao_2:	String,
 	pub nome_csv:		String,
 }
-
 
 #[allow(dead_code)]
 impl Dados {
