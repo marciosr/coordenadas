@@ -116,24 +116,37 @@ fn analisa_memorial (uri_entrada: PathBuf, uri_saida: PathBuf, expressao_n: Stri
     for correspondencia in Regex::new(&expressao_n).unwrap().find_iter(text) {
     	let start = correspondencia.start() as usize;
     	let end = correspondencia.end() as usize;
+
     	vetor1.push(&text[start..end]);
     }
 
 	for correspondencia in Regex::new(&expressao_e).unwrap().find_iter(text) {
     	let start = correspondencia.start() as usize;
     	let end = correspondencia.end() as usize;
+
     	vetor2.push(&text[start..end]);
     }
-    gera_csv (vetor1, vetor2, uri_saida).expect("Não foi possível utilizar a uri informada pela função Dados::new()");
+
+	let mut vetor3 = Vec::with_capacity(VEC_SIZE);
+    for x in vetor1.iter_mut() {
+    	vetor3.push(x.replace(".",""));
+    }
+
+    let mut vetor4 = Vec::with_capacity(VEC_SIZE);
+   	for x in vetor2.iter_mut() {
+    	vetor4.push(x.replace(".",""));
+    }
+
+    gera_csv (vetor3, vetor4, uri_saida).expect("Não foi possível utilizar a uri informada pela função Dados::new()");
     Ok(())
 }
 
-fn gera_csv (vec: Vec<&str>,vec1: Vec<&str>, uri2: PathBuf) -> Result<()> {
+fn gera_csv (vec: Vec<String>,vec1: Vec<String>, uri2: PathBuf) -> Result<()> {
 	let mut wtr = Writer::from_path(uri2)?;
 	wtr.write_record(&["N","E"])?;
 
 	for i in 0..vec.len() {
-		wtr.write_record(&[vec[i],vec1[i]]).expect("Não foi possível gravar os dados do vetor");
+		wtr.write_record(&[vec[i].as_str(),vec1[i].as_str()]).expect("Não foi possível gravar os dados do vetor");
 	}
 
 	wtr.flush()?;
@@ -155,9 +168,9 @@ struct Dados {
 impl Dados {
 	fn new (bt_entrada:		&FileChooserButton,
 			bt_saida:		&FileChooserButton,
-			ent_exp1:	&Entry,
-			ent_exp2:	&Entry,
-			ent_nome:	&Entry)-> Dados {
+			ent_exp1:		&Entry,
+			ent_exp2:		&Entry,
+			ent_nome:		&Entry)-> Dados {
 
 		let uri_entrada = bt_entrada.get_filename().unwrap();
 		println!("URI da entrada {:?}\n", uri_entrada);
