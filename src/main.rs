@@ -62,7 +62,7 @@ impl MainWindow {
 
 			if Dados::check(&bt_entrada_clone, &bt_saida_clone, &ent_express1_clone, &ent_express2_clone, &ent_saida_clone, &rv_notifica_clone, &lb_notifica_clone) {
 
-			 	let dados = Dados::new(&bt_entrada_clone, &bt_entrada_clone, &ent_express1_clone, &ent_express2_clone, &ent_saida_clone);
+			 	let dados = Dados::new(&bt_entrada_clone, &bt_saida_clone, &ent_express1_clone, &ent_express2_clone, &ent_saida_clone);
 			 	let texto = fs::read_to_string(&dados.uri_entrada);
 
 			 	match texto {
