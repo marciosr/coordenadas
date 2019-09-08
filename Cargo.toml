@@ -1,6 +1,6 @@
 [package]
-name = "coordinate_extractor"
-version = "0.1.0"
+name = "coordenadas"
+version = "0.1.1"
 authors = ["marcio"]
 edition = "2018"
 
