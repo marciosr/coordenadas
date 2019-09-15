@@ -86,7 +86,19 @@ impl MainWindow {
 			rv_notifica_clone2.set_reveal_child(false);
 		});
 
-		MainWindow { glade, window, ent_express1, ent_express2, bt_fechar, bt_run, bt_entrada, bt_saida, bt_fecha_notifica, rv_notifica, lb_notifica }
+		MainWindow {
+	        glade,
+	        window,
+	        ent_express1,
+	        ent_express2,
+	        bt_fechar,
+	        bt_run,
+	        bt_entrada,
+	        bt_saida,
+	        bt_fecha_notifica,
+	        rv_notifica,
+	        lb_notifica
+        }
 	}
 }
 
