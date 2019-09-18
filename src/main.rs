@@ -22,6 +22,7 @@ pub struct MainWindow {
 	pub bt_fecha_notifica: Button,
 	pub rv_notifica: Revealer,
 	pub lb_notifica: Label,
+	pub cb_tipo_coord: ComboBoxText
 }
 
 impl MainWindow {
@@ -39,6 +40,8 @@ impl MainWindow {
 		let bt_fecha_notifica: Button = glade.get_object("bt_fecha_notifica").unwrap();
 		let rv_notifica: Revealer = glade.get_object("rv_notifica").unwrap();
 		let lb_notifica: Label = glade.get_object("label2").unwrap();
+		
+		let cb_tipo_coord: ComboBoxText = glade.get_object("cb_tipo_coord").unwrap();
 
 		window.connect_delete_event(move |_,_| {
 			main_quit();
@@ -85,7 +88,19 @@ impl MainWindow {
 		bt_fecha_notifica.connect_clicked(move |_| {
 			rv_notifica_clone2.set_reveal_child(false);
 		});
-
+		
+		{
+			let combo = cb_tipo_coord.clone();
+			let ent_1 = ent_express1.clone();
+			let ent_2 = ent_express2.clone();
+			
+			combo.connect_changed(move |c| {
+				let tipo = c.get_active_id().unwrap();
+				set_entrys(&ent_1, &ent_2, &String::from(tipo)); 
+				//println!("O tipo é: {}", tipo); 
+			});
+		}
+		
 		MainWindow {
 	        glade,
 	        window,
@@ -97,7 +112,8 @@ impl MainWindow {
 	        bt_saida,
 	        bt_fecha_notifica,
 	        rv_notifica,
-	        lb_notifica
+	        lb_notifica,
+	        cb_tipo_coord
         }
 	}
 }
@@ -244,4 +260,29 @@ impl Dados {
 
 		resultado
 	}
+}
+
+fn set_entrys (	//combo: Gtk::ComboBoxText,
+				entry_y: &Entry,
+				entry_x: &Entry, 
+				id: &str) {
+	//let tipo = combo.get_active_text().unwrap();
+	
+	match id {
+		"0" => {
+			entry_y.set_text(&String::from(r"\d.\d{3}.\d{3},\d{1,3}"));
+			entry_x.set_text(&String::from(r" \d{3}.\d{3},\d{1,3}"));
+		},
+		"1" => {
+			entry_y.set_text(&String::from(r"[+-]?\d+\.\d{6}")); /// TODO: Melhorar a ER para diferenciar lat e long. Valor entre ...
+			entry_x.set_text(&String::from(r"[+-]?\d+\.\d{6}"));
+		},
+		"2" => {
+			entry_y.set_text(&String::from(r"xxxxxx")); /// TODO: Melhorar a ER para diferenciar lat e long. Valor entre ...
+			entry_x.set_text(&String::from(r"yyyyyyy"));			
+		},
+		&_ => {println!("Não há nenhum padrão selecionado");} 
+	
+	}
+	
 }
