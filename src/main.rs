@@ -11,18 +11,18 @@ use csv::*;
 use std::path::PathBuf;
 
 pub struct MainWindow {
-	pub glade: Builder,
-	pub window: Window,
-	pub ent_express1: Entry,
-	pub ent_express2: Entry,
-	pub bt_fechar: Button,
-	pub bt_run: Button,
-	pub bt_entrada: FileChooserButton,
-	pub bt_saida: FileChooserButton,
+	pub glade:			Builder,
+	pub window:			Window,
+	pub ent_latitude:	Entry,
+	pub ent_longitude:	Entry,
+	pub bt_fechar:		Button,
+	pub bt_run:			Button,
+	pub bt_entrada:		FileChooserButton,
+	pub bt_saida:		FileChooserButton,
 	pub bt_fecha_notifica: Button,
-	pub rv_notifica: Revealer,
-	pub lb_notifica: Label,
-	pub cb_tipo_coord: ComboBoxText
+	pub rv_notifica:	Revealer,
+	pub lb_notifica:	Label,
+	pub cb_tipo_coord:	ComboBoxText
 }
 
 impl MainWindow {
@@ -30,8 +30,8 @@ impl MainWindow {
 		let glade_src = include_str!("ui.glade");
 		let glade = gtk::Builder::new_from_string(glade_src);
 		let window: gtk::Window = glade.get_object("window").unwrap();
-		let ent_express1: Entry = glade.get_object("ent_express1").unwrap();
-		let ent_express2: Entry = glade.get_object("ent_express2").unwrap();
+		let ent_latitude: Entry = glade.get_object("ent_latitude").unwrap();
+		let ent_longitude: Entry = glade.get_object("ent_longitude").unwrap();
 		let ent_saida: Entry = glade.get_object("ent_saida").unwrap();
 		let bt_fechar: Button = glade.get_object("bt_fechar").unwrap();
 		let bt_run: Button = glade.get_object("bt_run").unwrap();
@@ -40,7 +40,6 @@ impl MainWindow {
 		let bt_fecha_notifica: Button = glade.get_object("bt_fecha_notifica").unwrap();
 		let rv_notifica: Revealer = glade.get_object("rv_notifica").unwrap();
 		let lb_notifica: Label = glade.get_object("label2").unwrap();
-		
 		let cb_tipo_coord: ComboBoxText = glade.get_object("cb_tipo_coord").unwrap();
 
 		window.connect_delete_event(move |_,_| {
@@ -55,29 +54,29 @@ impl MainWindow {
 
 		let bt_entrada_clone = bt_entrada.clone();
 		let bt_saida_clone = bt_saida.clone();
-		let ent_express1_clone = ent_express1.clone();
-		let ent_express2_clone = ent_express2.clone();
+		let ent_latitude_clone = ent_latitude.clone();
+		let ent_longitude_clone = ent_longitude.clone();
 		let ent_saida_clone = ent_saida.clone();
 		let rv_notifica_clone = rv_notifica.clone();
 		let lb_notifica_clone = lb_notifica.clone();
 
 		bt_run.connect_clicked(move |_| {
 
-			if Dados::check(&bt_entrada_clone, &bt_saida_clone, &ent_express1_clone, &ent_express2_clone, &ent_saida_clone, &rv_notifica_clone, &lb_notifica_clone) {
+			if Dados::check(&bt_entrada_clone, &bt_saida_clone, &ent_latitude_clone, &ent_longitude_clone, &ent_saida_clone, &rv_notifica_clone, &lb_notifica_clone) {
 
-			 	let dados = Dados::new(&bt_entrada_clone, &bt_saida_clone, &ent_express1_clone, &ent_express2_clone, &ent_saida_clone);
+			 	let dados = Dados::new(&bt_entrada_clone, &bt_saida_clone, &ent_latitude_clone, &ent_longitude_clone, &ent_saida_clone);
 			 	let texto = fs::read_to_string(&dados.uri_entrada);
 
 			 	match texto {
 			 		Ok(_)	=> {
-					 	analisa_memorial (	dados.uri_entrada,
+					 	analisa_texto (	dados.uri_entrada,
 					 						dados.uri_saida,
-					 						dados.expressao_1,
-					 						dados.expressao_2).expect("Não foi possível carregar o arquivo de texto");
+					 						dados.latitude,
+					 						dados.longitude).expect("Não foi possível carregar o arquivo de texto");
 			 		},
 			 		Err(e)		=> {
 			 			println!("Erro no processamento do texto: {}", e);
-			 			lb_notifica_clone.set_label("A codificação do arquivo de entrada deve ser UTF-8! Converta-o em um editor de texto.");
+			 			lb_notifica_clone.set_label("A codificação do arquivo de entrada deve ser UTF-8!\nConverta-o em um editor de texto.");
 			 			rv_notifica_clone.set_reveal_child(true);
 			 		},
 			 	}
@@ -91,8 +90,8 @@ impl MainWindow {
 		
 		{
 			let combo = cb_tipo_coord.clone();
-			let ent_1 = ent_express1.clone();
-			let ent_2 = ent_express2.clone();
+			let ent_1 = ent_latitude.clone();
+			let ent_2 = ent_longitude.clone();
 			
 			combo.connect_changed(move |c| {
 				let tipo = c.get_active_id().unwrap();
@@ -104,8 +103,8 @@ impl MainWindow {
 		MainWindow {
 	        glade,
 	        window,
-	        ent_express1,
-	        ent_express2,
+	        ent_latitude,
+	        ent_longitude,
 	        bt_fechar,
 	        bt_run,
 	        bt_entrada,
@@ -131,7 +130,7 @@ fn main() {
     gtk::main();
 }
 
-fn analisa_memorial (uri_entrada: PathBuf, uri_saida: PathBuf, expressao_n: String,  expressao_e: String) -> Result<()> {
+fn analisa_texto (uri_entrada: PathBuf, uri_saida: PathBuf, expressao_n: String,  expressao_e: String) -> Result<()> {
 	let texto = fs::read_to_string(uri_entrada)?; // Tirei o método .unwrap() e coloquei o operador ?
 	let text = &String::from(texto);
 
@@ -141,6 +140,8 @@ fn analisa_memorial (uri_entrada: PathBuf, uri_saida: PathBuf, expressao_n: Stri
 	// r"\d.\d{3}.\d{3},\d{3}" -> quando utilizado através do gtk_entry não foi
 	// necessário o caracteres r e as aspas, apenas
 	// a expressão regular propriamente dita.
+	println!("Expressão latitude: {}", expressao_n);
+	println!("Expressão longitude: {}", expressao_e);
     for correspondencia in Regex::new(&expressao_n).unwrap().find_iter(text) {
     	let start = correspondencia.start() as usize;
     	let end = correspondencia.end() as usize;
@@ -173,7 +174,7 @@ fn analisa_memorial (uri_entrada: PathBuf, uri_saida: PathBuf, expressao_n: Stri
 
 fn gera_csv (vec: Vec<String>,vec1: Vec<String>, uri2: PathBuf) -> Result<()> {
 	let mut wtr = Writer::from_path(uri2)?;
-	wtr.write_record(&["N","E"])?;
+	wtr.write_record(&["Latitude","Longitude"])?;
 
 	for i in 0..vec.len() {
 		wtr.write_record(&[vec[i].as_str(),vec1[i].as_str()]).expect("Não foi possível gravar os dados do vetor");
@@ -188,8 +189,8 @@ fn gera_csv (vec: Vec<String>,vec1: Vec<String>, uri2: PathBuf) -> Result<()> {
 struct Dados {
 	pub uri_entrada:	PathBuf,
 	pub uri_saida:		PathBuf,
-	pub expressao_1:	String,
-	pub expressao_2:	String,
+	pub latitude:		String,
+	pub longitude:		String,
 	pub nome_csv:		String,
 }
 
@@ -207,14 +208,14 @@ impl Dados {
 		let mut uri_saida = bt_saida.get_filename().unwrap();
 		println!("URI saída é: {:?}", bt_saida.get_filename().unwrap());
 
-		let expressao_1: String = ent_exp1.get_text().unwrap().to_string();
-		let expressao_2: String = ent_exp2.get_text().unwrap().to_string();
+		let latitude: String = ent_exp1.get_text().unwrap().to_string();
+		let longitude: String = ent_exp2.get_text().unwrap().to_string();
 		let nome_csv: String = ent_nome.get_text().unwrap().to_string();
 
 		uri_saida.push(&nome_csv);
 		uri_saida.set_extension("csv");
 
-		Dados { uri_entrada, uri_saida, expressao_1, expressao_2, nome_csv }
+		Dados { uri_entrada, uri_saida, latitude, longitude, nome_csv }
 	}
 
 	fn check(	bt_entrada:		&FileChooserButton,
@@ -263,23 +264,21 @@ impl Dados {
 }
 
 fn set_entrys (	//combo: Gtk::ComboBoxText,
-				entry_y: &Entry,
-				entry_x: &Entry, 
+				entry_latitude: &Entry,
+				entry_longitude: &Entry,
 				id: &str) {
-	//let tipo = combo.get_active_text().unwrap();
-	
 	match id {
 		"0" => {
-			entry_y.set_text(&String::from(r"\d.\d{3}.\d{3},\d{1,3}"));
-			entry_x.set_text(&String::from(r" \d{3}.\d{3},\d{1,3}"));
+			entry_latitude.set_text(&String::from(r"\d.\d{3}.\d{3},\d{1,3}")); // Latitude
+			entry_longitude.set_text(&String::from(r" \d{3}.\d{3},\d{1,3}"));	// Longitude
 		},
 		"1" => {
-			entry_y.set_text(&String::from(r"[+-]?\d+\.\d{6}")); /// TODO: Melhorar a ER para diferenciar lat e long. Valor entre ...
-			entry_x.set_text(&String::from(r"[+-]?\d+\.\d{6}"));
+			entry_latitude.set_text(&String::from(r"[+-]?[3-4]\d\.\d{6}"));
+			entry_longitude.set_text(&String::from(r"[+-]?[0-2]\d\.\d{6}"));
 		},
 		"2" => {
-			entry_y.set_text(&String::from(r"xxxxxx")); /// TODO: Melhorar a ER para diferenciar lat e long. Valor entre ...
-			entry_x.set_text(&String::from(r"yyyyyyy"));			
+			entry_latitude.set_text(&String::from(r"[0-2]\dS\s[0-5]\d'\s[0-5]\d"));
+			entry_longitude.set_text(&String::from(r"[3-7]\dW\s[0-5]\d'\s[0-5]\d"));
 		},
 		&_ => {println!("Não há nenhum padrão selecionado");} 
 	
