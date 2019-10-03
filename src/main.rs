@@ -386,8 +386,42 @@ fn set_entrys (	//combo: Gtk::ComboBoxText,
 	}
 }
 
+/// Novas funções ainda não funcionais
+
+fn atualiza_hashmap (nome: String, expressoes: Expressoes, map: BTreeMap<String, Expressoes>) -> BTreeMap<String, Expressoes> {
+	map.insert(nome, expressoes);
+	map
+}
+
+fn atualiza_entradas (entry_latitude: &Entry,
+						entry_longitude: &Entry, 
+						map: BTreeMap<String, Expressoes,
+						nome_perfil: String						// Perfil de expressões regulares
+						) {
+
+	expressoes = map.get(perfil).unrwap();
+	entry_latitude.set_text(expressoes.latitude);
+	entry_longitude.set_text(expressoes.logitude);
+}
+
+fn salva_perfis (serializado: String) -> std::io::Result<()> {
+	let mut file = File::create("perfis.json")?;
+	file.write_all(&serializado.as_bytes())?;
+
+	Ok(())
+}
 
 fn carrega_perfis () -> std::io::Result<(), String> {
 	let mut file = File::open("perfis.json")?;
 	file
+}
+
+let serializa (map: BTreeMap<String, Expressoes>) -> String {
+	let serializado = serde_json::so_string(&map).unwrap();
+	serializado
+}
+
+let desserializa (serializado: String) -> BTreeMap<String, Expressoes> {
+	let desserializado: BTreeMap<String, Expressoes> = serde_json::from(&serializado).unwrap();
+	desserializado
 }

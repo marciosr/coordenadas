@@ -70,6 +70,7 @@
                       <object class="GtkEntry" id="ent_express1">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="tooltip_text" translatable="yes">Informe a primeira expressão regular referente a coordenada N (Y)</property>
                         <property name="text" translatable="yes">\d.\d{3}.\d{3},\d{1,3}</property>
                       </object>
                       <packing>
@@ -81,11 +82,60 @@
                       <object class="GtkEntry" id="ent_express2">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="text" translatable="yes">\d{3}.\d{3},\d{1,3}</property>
+                        <property name="tooltip_text" translatable="yes">Informe a segunda expressão regular referente a coordenada E (X)</property>
+                        <property name="text" translatable="yes"> \d{3}.\d{3},\d{1,3}</property>
                       </object>
                       <packing>
                         <property name="left_attach">3</property>
                         <property name="top_attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Arquivo de entrada: </property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFileChooserButton" id="bt_entrada">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="tooltip_text" translatable="yes">Selecione um arquivo de texto para ser analisado.
+A codificação deverá ser UTF-8.</property>
+                        <property name="title" translatable="yes"/>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Planilha de saída (csv):</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">2</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFileChooserButton" id="bt_saida">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="tooltip_text" translatable="yes">Escolha o diretório para salvar o resultado da análise.</property>
+                        <property name="action">select-folder</property>
+                        <property name="title" translatable="yes"/>
+                      </object>
+                      <packing>
+                        <property name="left_attach">3</property>
+                        <property name="top_attach">1</property>
                       </packing>
                     </child>
                   </object>
@@ -101,49 +151,16 @@
                     <property name="can_focus">False</property>
                     <property name="row_homogeneous">True</property>
                     <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Arquivo de entrada: </property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">0</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                     <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Planilha de saída (csv):</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">2</property>
-                        <property name="top_attach">0</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                     <child>
-                      <object class="GtkFileChooserButton" id="bt_fs1">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="title" translatable="yes"/>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">0</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                     <child>
-                      <object class="GtkFileChooserButton" id="bt_fs2">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="action">select-folder</property>
-                        <property name="title" translatable="yes"/>
-                      </object>
-                      <packing>
-                        <property name="left_attach">3</property>
-                        <property name="top_attach">0</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>
@@ -163,7 +180,7 @@
                 <property name="can_focus">False</property>
                 <property name="valign">start</property>
                 <child>
-                  <object class="GtkRevealer" id="revealer2">
+                  <object class="GtkRevealer" id="rv_notifica">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">center</property>
@@ -191,7 +208,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button2">
+                              <object class="GtkButton" id="bt_fecha_notifica">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
