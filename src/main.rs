@@ -9,6 +9,7 @@ use std::fs;
 use std::string::String;
 use csv::*;
 use std::path::PathBuf;
+use std::rc::Rc;
 
 pub struct MainWindow {
 	pub glade:			Builder,
@@ -22,7 +23,10 @@ pub struct MainWindow {
 	pub bt_fecha_notifica: Button,
 	pub rv_notifica:	Revealer,
 	pub lb_notifica:	Label,
-	pub cb_tipo_coord:	ComboBoxText
+	pub cb_tipo_coord:	ComboBoxText,
+	pub bt_teste:		Button,
+	pub bt_ad:			Button
+	//pub dialog:			Dialog,
 }
 
 impl MainWindow {
@@ -41,52 +45,65 @@ impl MainWindow {
 		let rv_notifica: Revealer = glade.get_object("rv_notifica").unwrap();
 		let lb_notifica: Label = glade.get_object("label2").unwrap();
 		let cb_tipo_coord: ComboBoxText = glade.get_object("cb_tipo_coord").unwrap();
+		let bt_teste: Button = glade.get_object("bt_teste").unwrap();
+		let bt_ad: Button = glade.get_object("bt_ad").unwrap();
 
-		window.connect_delete_event(move |_,_| {
-			main_quit();
-			Inhibit(false)
-		});
+		
+		struct Expressoes {
+			latitude:	String,
+			longitude:	String
+		}
+		
+		let perfis_serializados = carrega_perfis();
+		let perfis = desserializa(perfis_serializados);
+		
+		atualiza_entradas(	&ent_latitude,
+							&ent_longitude,
+							map,
+							nome_perfil );
+		 
+				
+		
+		{ // Bloco de execussão da busca
+			let bt_entrada_clone = bt_entrada.clone();
+			let bt_saida_clone = bt_saida.clone();
+			let ent_latitude_clone = ent_latitude.clone();
+			let ent_longitude_clone = ent_longitude.clone();
+			let ent_saida_clone = ent_saida.clone();
+			let rv_notifica_clone = rv_notifica.clone();
+			
+			let lb_notifica_clone = lb_notifica.clone();
 
-		bt_fechar.connect_clicked(move |_| {
-			main_quit();
-			Inhibit(false);
-		});
+			bt_run.connect_clicked(move |_| {
 
-		let bt_entrada_clone = bt_entrada.clone();
-		let bt_saida_clone = bt_saida.clone();
-		let ent_latitude_clone = ent_latitude.clone();
-		let ent_longitude_clone = ent_longitude.clone();
-		let ent_saida_clone = ent_saida.clone();
-		let rv_notifica_clone = rv_notifica.clone();
-		let lb_notifica_clone = lb_notifica.clone();
+				if Dados::check(&bt_entrada_clone, &bt_saida_clone, &ent_latitude_clone, &ent_longitude_clone, &ent_saida_clone, &rv_notifica_clone, &lb_notifica_clone) {
 
-		bt_run.connect_clicked(move |_| {
+				 	let dados = Dados::new(&bt_entrada_clone, &bt_saida_clone, &ent_latitude_clone, &ent_longitude_clone, &ent_saida_clone);
+				 	let texto = fs::read_to_string(&dados.uri_entrada);
 
-			if Dados::check(&bt_entrada_clone, &bt_saida_clone, &ent_latitude_clone, &ent_longitude_clone, &ent_saida_clone, &rv_notifica_clone, &lb_notifica_clone) {
-
-			 	let dados = Dados::new(&bt_entrada_clone, &bt_saida_clone, &ent_latitude_clone, &ent_longitude_clone, &ent_saida_clone);
-			 	let texto = fs::read_to_string(&dados.uri_entrada);
-
-			 	match texto {
-			 		Ok(_)	=> {
-					 	analisa_texto (	dados.uri_entrada,
-					 						dados.uri_saida,
-					 						dados.latitude,
-					 						dados.longitude).expect("Não foi possível carregar o arquivo de texto");
-			 		},
-			 		Err(e)		=> {
-			 			println!("Erro no processamento do texto: {}", e);
-			 			lb_notifica_clone.set_label("A codificação do arquivo de entrada deve ser UTF-8!\nConverta-o em um editor de texto.");
-			 			rv_notifica_clone.set_reveal_child(true);
-			 		},
-			 	}
-			} else { println!("Faltam parâmetros!"); }
-		});
-
-		let rv_notifica_clone2 = rv_notifica.clone();
-		bt_fecha_notifica.connect_clicked(move |_| {
-			rv_notifica_clone2.set_reveal_child(false);
-		});
+				 	match texto {
+				 		Ok(_)	=> {
+						 	analisa_texto (	dados.uri_entrada,
+						 						dados.uri_saida,
+						 						dados.latitude,
+						 						dados.longitude).expect("Não foi possível carregar o arquivo de texto");
+				 		},
+				 		Err(e)		=> {
+				 			println!("Erro no processamento do texto: {}", e);
+				 			lb_notifica_clone.set_label("A codificação do arquivo de entrada deve ser UTF-8!\nConverta-o em um editor de texto.");
+				 			rv_notifica_clone.set_reveal_child(true);
+				 		},
+				 	}
+				} else { println!("Faltam parâmetros!"); }
+			});
+		}
+		
+		{
+			let rv_notifica_clone2 = rv_notifica.clone();
+			bt_fecha_notifica.connect_clicked(move |_| {
+				rv_notifica_clone2.set_reveal_child(false);
+			});
+		}
 		
 		{
 			let combo = cb_tipo_coord.clone();
@@ -99,7 +116,46 @@ impl MainWindow {
 				//println!("O tipo é: {}", tipo); 
 			});
 		}
+		// let dia_clone = cadastra.clone();
+		// let mut personal = ExprePers {pers_latitude:String::from("teste"), pers_longitude:String::from("teste")};
+		{
+			let ent_latitude_clone = ent_latitude.clone();
+			let ent_longitude_clone = ent_longitude.clone();
+			let cb_tipo_coord_clone = cb_tipo_coord.clone();
+			bt_ad.connect_clicked(move |_| {
+				//println!("O conteúdo do dialog é: {:?}", dia_clone.dialog);
+				//dia_clone.dialog.run();
+				//d.show_all();
+				let cadastra = Cadastra::new();
+				let cadastra_clone = cadastra.clone();
+				let cb_tipo_coord_clone2 = cb_tipo_coord_clone.clone();
+				let ent_latitude_clone2 = ent_latitude_clone.clone();
+				let ent_longitude_clone2 = ent_longitude_clone.clone();
+				cadastra.bt_fecha_dialogo.connect_clicked(move|_|{
+
+					&cb_tipo_coord_clone2.append_text(&cadastra_clone.ent_dialog_modelo.get_text().unwrap().to_string());
+					&ent_latitude_clone2.set_text(&cadastra_clone.ent_dialog_latitude.get_text().unwrap().to_string());
+					&ent_longitude_clone2.set_text(&cadastra_clone.ent_dialog_longitude.get_text().unwrap().to_string());
+					cadastra_clone.dialog.destroy();
+				});
+
+				//personal.pers_latitude = cadastra.ent_dialog_latitude.get_text().unwrap().to_string();
+
+				cadastra.dialog.run();
+				//cadastra
+			});
+		}
 		
+		window.connect_delete_event(move |_,_| {
+			main_quit();
+			Inhibit(false)
+		});
+
+		bt_fechar.connect_clicked(move |_| {
+			main_quit();
+			Inhibit(false);
+		});
+
 		MainWindow {
 	        glade,
 	        window,
@@ -112,11 +168,49 @@ impl MainWindow {
 	        bt_fecha_notifica,
 	        rv_notifica,
 	        lb_notifica,
-	        cb_tipo_coord
-        }
+	        cb_tipo_coord,
+	        //dialog,
+			bt_teste,
+			bt_ad
+		}
 	}
 }
 
+pub struct Cadastra {
+	pub dialog:					Dialog,
+	pub ent_dialog_modelo:		Entry,
+	pub ent_dialog_latitude:	Entry,
+	pub ent_dialog_longitude:	Entry,
+	pub bt_fecha_dialogo:		Button,
+	pub bt_preencher:			Button
+}
+
+impl Cadastra {
+	fn new() -> Rc<Self> {
+		let glade_src = include_str!("ui.glade");
+		let glade = gtk::Builder::new_from_string(glade_src);
+		let dialog: gtk::Dialog = glade.get_object("dialog").unwrap();
+
+		let ent_dialog_modelo: Entry = glade.get_object("ent_dialog_modelo").unwrap();
+		let ent_dialog_latitude: Entry = glade.get_object("ent_dialog_latitude").unwrap();
+		let ent_dialog_longitude: Entry = glade.get_object("ent_dialog_longitude").unwrap();
+		let bt_fecha_dialogo: Button = glade.get_object("bt_fecha_dialogo").unwrap();
+		let bt_preencher: Button = glade.get_object("bt_preencher").unwrap();
+
+		//dialog.add(&bt_fecha_dialogo);
+
+		let cadastra = Rc::new(Self {
+			dialog,
+			ent_dialog_modelo,
+			ent_dialog_latitude,
+			ent_dialog_longitude,
+			bt_fecha_dialogo,
+			bt_preencher
+		});
+		cadastra
+	}
+
+}
 
 fn main() {
 	if gtk::init().is_err() {
@@ -156,8 +250,6 @@ fn analisa_texto (uri_entrada: PathBuf, uri_saida: PathBuf, expressao_n: String,
     	vetor2.push(&text[start..end]);
     }
 
-	// TODO: Verificar a possibilidade de fazer uma função específicamente para remover os pontos, ou outros caracteres quando necessário.
-
 	let mut vetor3 = Vec::with_capacity(VEC_SIZE);
     for x in vetor1.iter_mut() {
     	vetor3.push(x.replace(".",""));
@@ -184,8 +276,6 @@ fn gera_csv (vec: Vec<String>,vec1: Vec<String>, uri2: PathBuf) -> Result<()> {
 	Ok(())
 }
 
-#[allow(dead_code)]
-
 struct Dados {
 	pub uri_entrada:	PathBuf,
 	pub uri_saida:		PathBuf,
@@ -194,7 +284,6 @@ struct Dados {
 	pub nome_csv:		String,
 }
 
-#[allow(dead_code)]
 impl Dados {
 	fn new (bt_entrada:		&FileChooserButton,
 			bt_saida:		&FileChooserButton,
@@ -263,14 +352,24 @@ impl Dados {
 	}
 }
 
+
+struct Teste {
+	x: String,
+	y: String
+}
+
 fn set_entrys (	//combo: Gtk::ComboBoxText,
 				entry_latitude: &Entry,
 				entry_longitude: &Entry,
 				id: &str) {
+	let utm = Teste { x: String::from(r"\d.\d{3}.\d{3},\d{1,3}"), y: String::from(r" \d{3}.\d{3},\d{1,3}")};
 	match id {
 		"0" => {
-			entry_latitude.set_text(&String::from(r"\d.\d{3}.\d{3},\d{1,3}")); // Latitude
-			entry_longitude.set_text(&String::from(r" \d{3}.\d{3},\d{1,3}"));	// Longitude
+			
+			//entry_latitude.set_text(&String::from(r"\d.\d{3}.\d{3},\d{1,3}")); // Latitude
+			entry_latitude.set_text(&utm.x); // Latitude
+			//entry_longitude.set_text(&String::from(r" \d{3}.\d{3},\d{1,3}"));	// Longitude
+			entry_longitude.set_text(&utm.y);	// Longitude
 		},
 		"1" => {
 			entry_latitude.set_text(&String::from(r"[+-]?[3-4]\d\.\d{6}"));
@@ -280,8 +379,15 @@ fn set_entrys (	//combo: Gtk::ComboBoxText,
 			entry_latitude.set_text(&String::from(r"[0-2]\dS\s[0-5]\d'\s[0-5]\d"));
 			entry_longitude.set_text(&String::from(r"[3-7]\dW\s[0-5]\d'\s[0-5]\d"));
 		},
-		&_ => {println!("Não há nenhum padrão selecionado");} 
+		&_ => {
+			println!("Não há nenhum padrão selecionado");
+		} 
 	
 	}
-	
+}
+
+
+fn carrega_perfis () -> std::io::Result<(), String> {
+	let mut file = File::open("perfis.json")?;
+	file
 }
