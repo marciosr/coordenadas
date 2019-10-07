@@ -1,15 +1,20 @@
 #![windows_subsystem = "windows"]
-#[allow(unused)]
 extern crate gtk;
 extern crate regex;
 
-use gtk::*;
-use regex::Regex;
+use std::fs::File;
 use std::fs;
+use std::io::prelude::*;
 use std::string::String;
-use csv::*;
 use std::path::PathBuf;
 use std::rc::Rc;
+use std::cell::{RefCell, RefMut};
+use std::collections::BTreeMap;
+
+use gtk::*;
+use regex::Regex;
+use csv::*;
+use serde::{Serialize, Deserialize};
 
 pub struct MainWindow {
 	pub glade:			Builder,
@@ -23,8 +28,8 @@ pub struct MainWindow {
 	pub bt_fecha_notifica: Button,
 	pub rv_notifica:	Revealer,
 	pub lb_notifica:	Label,
-	pub cb_tipo_coord:	ComboBoxText,
-	pub bt_teste:		Button,
+	pub cb_perfis:	ComboBoxText,
+	//pub bt_teste:		Button,
 	pub bt_ad:			Button
 	//pub dialog:			Dialog,
 }
@@ -44,25 +49,28 @@ impl MainWindow {
 		let bt_fecha_notifica: Button = glade.get_object("bt_fecha_notifica").unwrap();
 		let rv_notifica: Revealer = glade.get_object("rv_notifica").unwrap();
 		let lb_notifica: Label = glade.get_object("label2").unwrap();
-		let cb_tipo_coord: ComboBoxText = glade.get_object("cb_tipo_coord").unwrap();
-		let bt_teste: Button = glade.get_object("bt_teste").unwrap();
+		let cb_perfis: ComboBoxText = glade.get_object("cb_perfis").unwrap();
+		//let bt_teste: Button = glade.get_object("bt_teste").unwrap();
 		let bt_ad: Button = glade.get_object("bt_ad").unwrap();
 
 		
-		struct Expressoes {
-			latitude:	String,
-			longitude:	String
-		}
+		let mut perfis_serializados = match carrega_perfis() {
+			Ok(perfis) => perfis,
+			Err(e) => serializa(&popula_perfis()),
+		};
 		
-		let perfis_serializados = carrega_perfis();
-		let perfis = desserializa(perfis_serializados);
+		// Uso do Rc<RefCell<>> com o intuito de permitir a mutabilidade interna
+		// ou seja, que o conteúdo deste container seja mudado. Há um borrow checker
+		// no runtime, portanto há custo na execussão do código.
 		
-		atualiza_entradas(	&ent_latitude,
-							&ent_longitude,
-							map,
-							nome_perfil );
-		 
-				
+		let perfis: Rc<RefCell<_>> = Rc::new(RefCell::new(desserializa(perfis_serializados)));
+
+		inicia_combo (&cb_perfis, &perfis);
+
+		cb_perfis.set_active(Some(1)); // Garante que haja um perfil ativo, assim não havera o crash de unwrap() on None.
+
+		let nome_perfil = cb_perfis.get_active_text().unwrap(); // Possível problema de unwrap sobre None
+		atualiza_campos(nome_perfil.to_string(), &ent_latitude, &ent_longitude, &perfis);
 		
 		{ // Bloco de execussão da busca
 			let bt_entrada_clone = bt_entrada.clone();
@@ -106,55 +114,91 @@ impl MainWindow {
 		}
 		
 		{
-			let combo = cb_tipo_coord.clone();
+			let combo = cb_perfis.clone();
 			let ent_1 = ent_latitude.clone();
 			let ent_2 = ent_longitude.clone();
+			let mut perfis_clone = perfis.clone();
 			
-			combo.connect_changed(move |c| {
-				let tipo = c.get_active_id().unwrap();
-				set_entrys(&ent_1, &ent_2, &String::from(tipo)); 
-				//println!("O tipo é: {}", tipo); 
+			combo.connect_changed(move |cb| {
+				let nome_perfil = cb.get_active_text().unwrap();
+				atualiza_campos(nome_perfil.to_string(), &ent_1, &ent_2, &perfis_clone);
+				println!("Linha 114: nome do perfil é: {}", nome_perfil);
 			});
 		}
-		// let dia_clone = cadastra.clone();
-		// let mut personal = ExprePers {pers_latitude:String::from("teste"), pers_longitude:String::from("teste")};
+
 		{
 			let ent_latitude_clone = ent_latitude.clone();
 			let ent_longitude_clone = ent_longitude.clone();
-			let cb_tipo_coord_clone = cb_tipo_coord.clone();
+			let cb_perfis_clone = cb_perfis.clone();
+			let mut perfis_clone0 = perfis.clone();
 			bt_ad.connect_clicked(move |_| {
-				//println!("O conteúdo do dialog é: {:?}", dia_clone.dialog);
-				//dia_clone.dialog.run();
-				//d.show_all();
+
 				let cadastra = Cadastra::new();
 				let cadastra_clone = cadastra.clone();
-				let cb_tipo_coord_clone2 = cb_tipo_coord_clone.clone();
+				let cadastra_clone0 = cadastra.clone();
+				let cb_perfis_clone2 = cb_perfis_clone.clone();
 				let ent_latitude_clone2 = ent_latitude_clone.clone();
 				let ent_longitude_clone2 = ent_longitude_clone.clone();
-				cadastra.bt_fecha_dialogo.connect_clicked(move|_|{
+				let mut perfis_clone1 = perfis_clone0.clone();
+				cadastra.bt_preencher.connect_clicked(move|_|{
 
-					&cb_tipo_coord_clone2.append_text(&cadastra_clone.ent_dialog_modelo.get_text().unwrap().to_string());
-					&ent_latitude_clone2.set_text(&cadastra_clone.ent_dialog_latitude.get_text().unwrap().to_string());
-					&ent_longitude_clone2.set_text(&cadastra_clone.ent_dialog_longitude.get_text().unwrap().to_string());
+					let nome_perfil =  &cadastra_clone.ent_dialog_perfil
+														.get_text().unwrap().to_string();
+
+					adiciona_perfil (	nome_perfil.to_string(),
+										&cadastra_clone.ent_dialog_latitude
+														.get_text().unwrap().to_string(),
+										&cadastra_clone.ent_dialog_longitude
+														.get_text().unwrap().to_string(),
+										&perfis_clone1
+									);
+					cb_perfis_clone2.append_text(nome_perfil);
+					println!("Teste do botão fecha diálogo\nO nome do perfil dentro do closure do bt-fecha é: {}\n
+						A expressão da latitude é {}\n
+						A expressão da longitude é {}\n
+						o conteúdo dos perfiles no closure é: {:?}",
+						nome_perfil,
+						&cadastra_clone.ent_dialog_latitude
+														.get_text().unwrap().to_string(),
+						&cadastra_clone.ent_dialog_longitude
+														.get_text().unwrap().to_string(),
+						&perfis_clone1
+						);
+					// Por padrão ao adicionar um perfil, este passa a ser o ativo
+					// atualiza_campos (&nome_perfil.to_string(), ent_latitude_clone2, ent_longitude_clone2);
 					cadastra_clone.dialog.destroy();
 				});
 
-				//personal.pers_latitude = cadastra.ent_dialog_latitude.get_text().unwrap().to_string();
+				cadastra.bt_fecha_dialogo.connect_clicked (move |_| {
+					cadastra_clone0.dialog.destroy();
+				});
 
 				cadastra.dialog.run();
-				//cadastra
 			});
 		}
 		
-		window.connect_delete_event(move |_,_| {
-			main_quit();
-			Inhibit(false)
-		});
+		{
+			let perfis_clone = perfis.clone();
+			window.connect_delete_event(move |_,_| {
+				let map = perfis_clone.borrow();
+				salva_perfis(serializa(&map));
+				main_quit();
+				Inhibit(false)
+			});
+		}
 
-		bt_fechar.connect_clicked(move |_| {
-			main_quit();
-			Inhibit(false);
-		});
+		{
+			let perfis_clone = perfis.clone();
+
+			bt_fechar.connect_clicked(move |_| {
+				let map = perfis_clone.borrow();
+				println!("variável pefris para a função salvar {:?}", perfis_clone);
+				println!("variável map para a função salvar {:?}", map);
+				salva_perfis(serializa(&map));
+				main_quit();
+				Inhibit(false);
+			});
+		}
 
 		MainWindow {
 	        glade,
@@ -168,9 +212,9 @@ impl MainWindow {
 	        bt_fecha_notifica,
 	        rv_notifica,
 	        lb_notifica,
-	        cb_tipo_coord,
+	        cb_perfis,
 	        //dialog,
-			bt_teste,
+			//bt_teste,
 			bt_ad
 		}
 	}
@@ -178,7 +222,7 @@ impl MainWindow {
 
 pub struct Cadastra {
 	pub dialog:					Dialog,
-	pub ent_dialog_modelo:		Entry,
+	pub ent_dialog_perfil:		Entry,
 	pub ent_dialog_latitude:	Entry,
 	pub ent_dialog_longitude:	Entry,
 	pub bt_fecha_dialogo:		Button,
@@ -191,17 +235,17 @@ impl Cadastra {
 		let glade = gtk::Builder::new_from_string(glade_src);
 		let dialog: gtk::Dialog = glade.get_object("dialog").unwrap();
 
-		let ent_dialog_modelo: Entry = glade.get_object("ent_dialog_modelo").unwrap();
+		let ent_dialog_perfil: Entry = glade.get_object("ent_dialog_perfil").unwrap();
 		let ent_dialog_latitude: Entry = glade.get_object("ent_dialog_latitude").unwrap();
 		let ent_dialog_longitude: Entry = glade.get_object("ent_dialog_longitude").unwrap();
 		let bt_fecha_dialogo: Button = glade.get_object("bt_fecha_dialogo").unwrap();
 		let bt_preencher: Button = glade.get_object("bt_preencher").unwrap();
 
-		//dialog.add(&bt_fecha_dialogo);
+		// dialog.add(&bt_fecha_dialogo);
 
 		let cadastra = Rc::new(Self {
 			dialog,
-			ent_dialog_modelo,
+			ent_dialog_perfil,
 			ent_dialog_latitude,
 			ent_dialog_longitude,
 			bt_fecha_dialogo,
@@ -209,7 +253,6 @@ impl Cadastra {
 		});
 		cadastra
 	}
-
 }
 
 fn main() {
@@ -352,56 +395,33 @@ impl Dados {
 	}
 }
 
-
-struct Teste {
-	x: String,
-	y: String
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Expressoes {
+	latitude: String,
+	longitude: String
 }
 
-fn set_entrys (	//combo: Gtk::ComboBoxText,
-				entry_latitude: &Entry,
+fn set_entrys (	entry_latitude: &Entry,
 				entry_longitude: &Entry,
-				id: &str) {
-	let utm = Teste { x: String::from(r"\d.\d{3}.\d{3},\d{1,3}"), y: String::from(r" \d{3}.\d{3},\d{1,3}")};
-	match id {
-		"0" => {
-			
-			//entry_latitude.set_text(&String::from(r"\d.\d{3}.\d{3},\d{1,3}")); // Latitude
-			entry_latitude.set_text(&utm.x); // Latitude
-			//entry_longitude.set_text(&String::from(r" \d{3}.\d{3},\d{1,3}"));	// Longitude
-			entry_longitude.set_text(&utm.y);	// Longitude
-		},
-		"1" => {
-			entry_latitude.set_text(&String::from(r"[+-]?[3-4]\d\.\d{6}"));
-			entry_longitude.set_text(&String::from(r"[+-]?[0-2]\d\.\d{6}"));
-		},
-		"2" => {
-			entry_latitude.set_text(&String::from(r"[0-2]\dS\s[0-5]\d'\s[0-5]\d"));
-			entry_longitude.set_text(&String::from(r"[3-7]\dW\s[0-5]\d'\s[0-5]\d"));
-		},
-		&_ => {
-			println!("Não há nenhum padrão selecionado");
-		} 
-	
-	}
+				nome_perfil: &String,
+				perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
+	let map = perfis.borrow();
+
+	let expressoes = map.get(nome_perfil).unwrap();
+	entry_latitude.set_text(&expressoes.latitude);
+	entry_longitude.set_text(&expressoes.longitude);
 }
 
-/// Novas funções ainda não funcionais
+fn adiciona_perfil (	perfil_n: String,
+						latitude_n: &String,
+						longitude_n: &String,
+						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
 
-fn atualiza_hashmap (nome: String, expressoes: Expressoes, map: BTreeMap<String, Expressoes>) -> BTreeMap<String, Expressoes> {
-	map.insert(nome, expressoes);
-	map
-}
+	let expressoes = Expressoes { latitude: latitude_n.to_string(), longitude: longitude_n.to_string()};
 
-fn atualiza_entradas (entry_latitude: &Entry,
-						entry_longitude: &Entry, 
-						map: BTreeMap<String, Expressoes,
-						nome_perfil: String						// Perfil de expressões regulares
-						) {
-
-	expressoes = map.get(perfil).unrwap();
-	entry_latitude.set_text(expressoes.latitude);
-	entry_longitude.set_text(expressoes.logitude);
+	let mut map: RefMut<_> = perfis.borrow_mut();
+	println!("O conteúdo dos perfils dentro da função adiciona perfi é: {:?}", map); // Para testes!
+	map.insert(perfil_n, expressoes);
 }
 
 fn salva_perfis (serializado: String) -> std::io::Result<()> {
@@ -411,17 +431,48 @@ fn salva_perfis (serializado: String) -> std::io::Result<()> {
 	Ok(())
 }
 
-fn carrega_perfis () -> std::io::Result<(), String> {
-	let mut file = File::open("perfis.json")?;
-	file
+fn carrega_perfis () -> std::io::Result<(String)> {
+	let mut file = fs::read_to_string("perfis.json")?;
+	Ok(file)
 }
 
-let serializa (map: BTreeMap<String, Expressoes>) -> String {
-	let serializado = serde_json::so_string(&map).unwrap();
+fn serializa (map: &BTreeMap<String, Expressoes>) -> String {
+	let serializado = serde_json::to_string(&map).unwrap();
 	serializado
 }
 
-let desserializa (serializado: String) -> BTreeMap<String, Expressoes> {
-	let desserializado: BTreeMap<String, Expressoes> = serde_json::from(&serializado).unwrap();
+fn desserializa (serializado: String) -> BTreeMap<String, Expressoes> {
+	let desserializado: BTreeMap<String, Expressoes> = serde_json::from_str(&serializado).unwrap();
 	desserializado
+}
+
+fn inicia_combo (	combo: &ComboBoxText,
+					perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>>
+				) {
+	let map = perfis.borrow();
+	for (key, value) in map.iter() {
+		println!("{}", key);
+		combo.append_text(&key);
+	}
+}
+
+fn atualiza_campos (	nome_perfil: String,
+						ent_latitude: &Entry,
+						ent_longitude: &Entry,
+						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
+
+	set_entrys(&ent_latitude, &ent_longitude, &String::from(nome_perfil), perfis);
+}
+
+fn popula_perfis () -> BTreeMap<String, Expressoes> {
+	let utm = Expressoes { latitude: String::from(r"\d.\d{3}.\d{3},\d{1,3}"), longitude: String::from(r" \d{3}.\d{3},\d{1,3}")};
+	let decimal = Expressoes { latitude: String::from(r"[+-]?[3-4]\d\.\d{6}"), longitude: String::from(r"[+-]?[0-2]\d\.\d{6}")};
+	let gms = Expressoes { latitude: String::from(r"[0-2]\dS\s[0-5]\d'\s[0-5]\d"), longitude: String::from(r"[3-7]\dW\s[0-5]\d'\s[0-5]\d")};
+
+	let mut perfis = BTreeMap::new();
+
+	perfis.insert("UTM".to_string(), utm);
+	perfis.insert("Decimal".to_string(), decimal);
+	perfis.insert("Graus, minutos e segundos".to_string(), gms);
+	perfis
 }
