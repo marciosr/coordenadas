@@ -4,6 +4,9 @@
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkDialog" id="dialog">
     <property name="can_focus">False</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
     <child type="titlebar">
       <placeholder/>
@@ -16,38 +19,20 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can_focus">False</property>
+            <property name="homogeneous">True</property>
+            <property name="baseline_position">top</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="bt_fecha_dialogo">
-                <property name="label" translatable="yes">Cancela</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
-              <object class="GtkButton" id="bt_preencher">
-                <property name="label" translatable="yes">Preencher</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
+              <placeholder/>
             </child>
           </object>
           <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -121,6 +106,43 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkGrid">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="row_homogeneous">True</property>
+            <property name="column_homogeneous">True</property>
+            <child>
+              <object class="GtkButton" id="bt_fecha_dialogo">
+                <property name="label" translatable="yes">Cancela</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="bt_preencher">
+                <property name="label" translatable="yes">Preencher</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
         </child>
@@ -182,7 +204,7 @@
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
-                        <property name="top_attach">1</property>
+                        <property name="top_attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -194,7 +216,7 @@
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
-                        <property name="top_attach">1</property>
+                        <property name="top_attach">2</property>
                         <property name="width">2</property>
                       </packing>
                     </child>
@@ -206,7 +228,7 @@
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
-                        <property name="top_attach">2</property>
+                        <property name="top_attach">3</property>
                       </packing>
                     </child>
                     <child>
@@ -218,7 +240,7 @@
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
-                        <property name="top_attach">2</property>
+                        <property name="top_attach">3</property>
                         <property name="width">2</property>
                       </packing>
                     </child>
@@ -231,6 +253,7 @@
                       <packing>
                         <property name="left_attach">1</property>
                         <property name="top_attach">0</property>
+                        <property name="width">2</property>
                       </packing>
                     </child>
                     <child>
@@ -242,6 +265,7 @@
                       <packing>
                         <property name="left_attach">0</property>
                         <property name="top_attach">0</property>
+                        <property name="height">2</property>
                       </packing>
                     </child>
                     <child>
@@ -252,7 +276,7 @@
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
-                        <property name="top_attach">3</property>
+                        <property name="top_attach">4</property>
                       </packing>
                     </child>
                     <child>
@@ -265,7 +289,7 @@ A codificação deverá ser UTF-8.</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
-                        <property name="top_attach">3</property>
+                        <property name="top_attach">4</property>
                         <property name="width">2</property>
                       </packing>
                     </child>
@@ -277,7 +301,7 @@ A codificação deverá ser UTF-8.</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
-                        <property name="top_attach">4</property>
+                        <property name="top_attach">5</property>
                       </packing>
                     </child>
                     <child>
@@ -290,7 +314,7 @@ A codificação deverá ser UTF-8.</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
-                        <property name="top_attach">4</property>
+                        <property name="top_attach">5</property>
                         <property name="width">2</property>
                       </packing>
                     </child>
@@ -302,7 +326,7 @@ A codificação deverá ser UTF-8.</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
-                        <property name="top_attach">5</property>
+                        <property name="top_attach">6</property>
                       </packing>
                     </child>
                     <child>
@@ -314,7 +338,7 @@ A codificação deverá ser UTF-8.</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
-                        <property name="top_attach">5</property>
+                        <property name="top_attach">6</property>
                         <property name="width">2</property>
                       </packing>
                     </child>
@@ -328,7 +352,20 @@ A codificação deverá ser UTF-8.</property>
                       </object>
                       <packing>
                         <property name="left_attach">2</property>
-                        <property name="top_attach">0</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="bt_rm">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="image">image3</property>
+                        <property name="always_show_image">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">1</property>
                       </packing>
                     </child>
                   </object>
@@ -481,6 +518,24 @@ A codificação deverá ser UTF-8.</property>
             <child>
               <placeholder/>
             </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -491,21 +546,9 @@ A codificação deverá ser UTF-8.</property>
       </object>
     </child>
   </object>
-  <object class="GtkListStore" id="liststore1">
-    <columns>
-      <!-- column-name latitude -->
-      <column type="gchararray"/>
-      <!-- column-name longitude -->
-      <column type="gchararray"/>
-      <!-- column-name identifica -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">AAA</col>
-        <col id="1" translatable="yes">BBB</col>
-        <col id="2" translatable="yes">UTM</col>
-      </row>
-    </data>
+  <object class="GtkImage" id="image3">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-delete</property>
   </object>
 </interface>

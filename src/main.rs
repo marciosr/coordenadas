@@ -17,21 +17,20 @@ use csv::*;
 use serde::{Serialize, Deserialize};
 
 pub struct MainWindow {
-	pub glade:			Builder,
-	pub window:			Window,
-	pub ent_latitude:	Entry,
-	pub ent_longitude:	Entry,
-	pub bt_fechar:		Button,
-	pub bt_run:			Button,
-	pub bt_entrada:		FileChooserButton,
-	pub bt_saida:		FileChooserButton,
-	pub bt_fecha_notifica: Button,
-	pub rv_notifica:	Revealer,
-	pub lb_notifica:	Label,
-	pub cb_perfis:	ComboBoxText,
-	//pub bt_teste:		Button,
-	pub bt_ad:			Button
-	//pub dialog:			Dialog,
+	pub glade:				Builder,
+	pub window:				Window,
+	pub ent_latitude:		Entry,
+	pub ent_longitude:		Entry,
+	pub bt_fechar:			Button,
+	pub bt_run:				Button,
+	pub bt_entrada:			FileChooserButton,
+	pub bt_saida:			FileChooserButton,
+	pub bt_fecha_notifica:	Button,
+	pub rv_notifica:		Revealer,
+	pub lb_notifica:		Label,
+	pub cb_perfis:			ComboBoxText,
+	pub bt_ad:				Button,
+	pub bt_rm:				Button
 }
 
 impl MainWindow {
@@ -50,24 +49,38 @@ impl MainWindow {
 		let rv_notifica: Revealer = glade.get_object("rv_notifica").unwrap();
 		let lb_notifica: Label = glade.get_object("label2").unwrap();
 		let cb_perfis: ComboBoxText = glade.get_object("cb_perfis").unwrap();
-		//let bt_teste: Button = glade.get_object("bt_teste").unwrap();
 		let bt_ad: Button = glade.get_object("bt_ad").unwrap();
+		let bt_rm: Button = glade.get_object("bt_rm").unwrap();
 
 		
-		let mut perfis_serializados = match carrega_perfis() {
+		let perfis_serializados = match carrega_perfis() {
 			Ok(perfis) => perfis,
-			Err(e) => serializa(&popula_perfis()),
+			Err(e) => { println!("Erro ao carregar os perfis: {}", e);
+					serializa_yaml(&popula_perfis())
+				},
 		};
 		
 		// Uso do Rc<RefCell<>> com o intuito de permitir a mutabilidade interna
 		// ou seja, que o conteúdo deste container seja mudado. Há um borrow checker
 		// no runtime, portanto há custo na execussão do código.
 		
-		let perfis: Rc<RefCell<_>> = Rc::new(RefCell::new(desserializa(perfis_serializados)));
+		let perfis: Rc<RefCell<_>> = Rc::new(RefCell::new(desserializa_yaml(perfis_serializados)));
 
 		inicia_combo (&cb_perfis, &perfis);
 
-		cb_perfis.set_active(Some(1)); // Garante que haja um perfil ativo, assim não havera o crash de unwrap() on None.
+		cb_perfis.set_id_column(1); // Garante que haja um perfil ativo, assim não havera o crash de unwrap() on None.
+		cb_perfis.set_active(Some(0));
+
+		let perfis = match cb_perfis.get_active_text() {
+			Some(_ativo) => perfis,
+			None =>	{
+				let perfis_populados: Rc<RefCell<_>> = Rc::new(RefCell::new(popula_perfis()));
+				inicia_combo (&cb_perfis, &perfis_populados);
+				perfis_populados
+			},
+		};
+
+		cb_perfis.set_active(Some(0));
 
 		let nome_perfil = cb_perfis.get_active_text().unwrap(); // Possível problema de unwrap sobre None
 		atualiza_campos(nome_perfil.to_string(), &ent_latitude, &ent_longitude, &perfis);
@@ -113,67 +126,97 @@ impl MainWindow {
 			});
 		}
 		
+
 		{
 			let combo = cb_perfis.clone();
 			let ent_1 = ent_latitude.clone();
 			let ent_2 = ent_longitude.clone();
-			let mut perfis_clone = perfis.clone();
+			let perfis_clone = perfis.clone();
 			
 			combo.connect_changed(move |cb| {
-				let nome_perfil = cb.get_active_text().unwrap();
-				atualiza_campos(nome_perfil.to_string(), &ent_1, &ent_2, &perfis_clone);
-				println!("Linha 114: nome do perfil é: {}", nome_perfil);
+				println!("Linha 114: O id do combo é antes da mudança: {:?}", cb.get_active_id());
+				match cb.get_active_text() {
+					Some(_texto) => {
+						let nome_perfil = cb.get_active_text().unwrap();
+						atualiza_campos(nome_perfil.to_string(), &ent_1, &ent_2, &perfis_clone);
+						println!("Linha 114: nome do perfil é: {}", nome_perfil);
+						println!("Linha 114: O id do combo é: {:?}", cb.get_active_id());
+					},
+					None => println!("Não há texto ativo"),
+
+				}
+
+
 			});
 		}
 
 		{
-			let ent_latitude_clone = ent_latitude.clone();
-			let ent_longitude_clone = ent_longitude.clone();
+			// let ent_latitude_clone = ent_latitude.clone();
+			// let ent_longitude_clone = ent_longitude.clone();
 			let cb_perfis_clone = cb_perfis.clone();
-			let mut perfis_clone0 = perfis.clone();
+			let perfis_clone0 = perfis.clone();
 			bt_ad.connect_clicked(move |_| {
 
 				let cadastra = Cadastra::new();
 				let cadastra_clone = cadastra.clone();
 				let cadastra_clone0 = cadastra.clone();
 				let cb_perfis_clone2 = cb_perfis_clone.clone();
-				let ent_latitude_clone2 = ent_latitude_clone.clone();
-				let ent_longitude_clone2 = ent_longitude_clone.clone();
-				let mut perfis_clone1 = perfis_clone0.clone();
+				// let ent_latitude_clone2 = ent_latitude_clone.clone();
+				// let ent_longitude_clone2 = ent_longitude_clone.clone();
+				let perfis_clone1 = perfis_clone0.clone();
 				cadastra.bt_preencher.connect_clicked(move|_|{
 
-					let nome_perfil =  &cadastra_clone.ent_dialog_perfil
-														.get_text().unwrap().to_string();
+					if	&cadastra_clone.ent_dialog_latitude.get_text().unwrap().to_string() == "" ||
+						&cadastra_clone.ent_dialog_longitude.get_text().unwrap().to_string() == "" ||
+						&cadastra_clone.ent_dialog_perfil.get_text().unwrap().to_string() == "" {
+						} else {
 
-					adiciona_perfil (	nome_perfil.to_string(),
-										&cadastra_clone.ent_dialog_latitude
-														.get_text().unwrap().to_string(),
-										&cadastra_clone.ent_dialog_longitude
-														.get_text().unwrap().to_string(),
-										&perfis_clone1
-									);
-					cb_perfis_clone2.append_text(nome_perfil);
-					println!("Teste do botão fecha diálogo\nO nome do perfil dentro do closure do bt-fecha é: {}\n
-						A expressão da latitude é {}\n
-						A expressão da longitude é {}\n
-						o conteúdo dos perfiles no closure é: {:?}",
-						nome_perfil,
-						&cadastra_clone.ent_dialog_latitude
-														.get_text().unwrap().to_string(),
-						&cadastra_clone.ent_dialog_longitude
-														.get_text().unwrap().to_string(),
-						&perfis_clone1
-						);
-					// Por padrão ao adicionar um perfil, este passa a ser o ativo
-					// atualiza_campos (&nome_perfil.to_string(), ent_latitude_clone2, ent_longitude_clone2);
-					cadastra_clone.dialog.destroy();
+							let nome_perfil =  &cadastra_clone.ent_dialog_perfil
+																.get_text().unwrap().to_string();
+
+							adiciona_perfil (	nome_perfil.to_string(),
+												&cadastra_clone.ent_dialog_latitude
+																.get_text().unwrap().to_string(),
+												&cadastra_clone.ent_dialog_longitude
+																.get_text().unwrap().to_string(),
+												&perfis_clone1
+											);
+							cb_perfis_clone2.append_text(nome_perfil);
+							println!("Teste do botão fecha diálogo\nO nome do perfil dentro do closure do bt-fecha é: {}\n
+								A expressão da latitude é {}\n
+								A expressão da longitude é {}\n
+								o conteúdo dos perfiles no closure é: {:?}",
+								nome_perfil,
+								&cadastra_clone.ent_dialog_latitude
+																.get_text().unwrap().to_string(),
+								&cadastra_clone.ent_dialog_longitude
+																.get_text().unwrap().to_string(),
+								&perfis_clone1
+								);
+							// Por padrão ao adicionar um perfil, este passa a ser o ativo
+							// atualiza_campos (&nome_perfil.to_string(), ent_latitude_clone2, ent_longitude_clone2);
+							cadastra_clone.dialog.destroy();
+					}
 				});
 
 				cadastra.bt_fecha_dialogo.connect_clicked (move |_| {
 					cadastra_clone0.dialog.destroy();
 				});
 
+
+
 				cadastra.dialog.run();
+
+				{
+					let dialog_clone = cadastra.dialog.clone();
+					cadastra.dialog.connect_close(move |_| {
+						//gtk::Dialog::destroy(&dialog_clone);
+						dialog_clone.destroy();
+						//main_quit();
+						//Inhibit(false)
+					});
+				}
+
 			});
 		}
 		
@@ -181,7 +224,10 @@ impl MainWindow {
 			let perfis_clone = perfis.clone();
 			window.connect_delete_event(move |_,_| {
 				let map = perfis_clone.borrow();
-				salva_perfis(serializa(&map));
+				match salva_perfis(serializa_yaml(&map)) {
+					Ok(a) => a,
+					Err(e) => println!("Erro ao salvar os perfis: {}", e),
+				};
 				main_quit();
 				Inhibit(false)
 			});
@@ -194,11 +240,25 @@ impl MainWindow {
 				let map = perfis_clone.borrow();
 				println!("variável pefris para a função salvar {:?}", perfis_clone);
 				println!("variável map para a função salvar {:?}", map);
-				salva_perfis(serializa(&map));
+				match salva_perfis(serializa_yaml(&map)) {
+					Ok(a) => a,
+					Err(e) => println!("Erro ao salvar os perfis: {}", e),
+				};
 				main_quit();
 				Inhibit(false);
 			});
 		}
+
+		{
+			let combo = cb_perfis.clone();
+			let perfis_clone = perfis.clone();
+
+			bt_rm.connect_clicked(move|_| {
+				remove_perfil(&combo, &perfis_clone);
+			});
+		}
+
+
 
 		MainWindow {
 	        glade,
@@ -215,7 +275,8 @@ impl MainWindow {
 	        cb_perfis,
 	        //dialog,
 			//bt_teste,
-			bt_ad
+			bt_ad,
+			bt_rm
 		}
 	}
 }
@@ -425,24 +486,36 @@ fn adiciona_perfil (	perfil_n: String,
 }
 
 fn salva_perfis (serializado: String) -> std::io::Result<()> {
-	let mut file = File::create("perfis.json")?;
+	let mut file = File::create("perfis.yaml")?;
 	file.write_all(&serializado.as_bytes())?;
 
 	Ok(())
 }
 
 fn carrega_perfis () -> std::io::Result<(String)> {
-	let mut file = fs::read_to_string("perfis.json")?;
+	let file = fs::read_to_string("perfis.yaml")?;
 	Ok(file)
 }
 
+#[allow(dead_code)]
 fn serializa (map: &BTreeMap<String, Expressoes>) -> String {
 	let serializado = serde_json::to_string(&map).unwrap();
 	serializado
 }
 
+fn serializa_yaml (map: &BTreeMap<String, Expressoes>) -> String {
+	let serializado = serde_yaml::to_string(&map).unwrap();
+	serializado
+}
+
+#[allow(dead_code)]
 fn desserializa (serializado: String) -> BTreeMap<String, Expressoes> {
 	let desserializado: BTreeMap<String, Expressoes> = serde_json::from_str(&serializado).unwrap();
+	desserializado
+}
+
+fn desserializa_yaml (serializado: String) -> BTreeMap<String, Expressoes> {
+	let desserializado: BTreeMap<String, Expressoes> = serde_yaml::from_str(&serializado).unwrap();
 	desserializado
 }
 
@@ -450,8 +523,8 @@ fn inicia_combo (	combo: &ComboBoxText,
 					perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>>
 				) {
 	let map = perfis.borrow();
-	for (key, value) in map.iter() {
-		println!("{}", key);
+	for (key, _value) in map.iter() {
+			println!("{:?}", key);
 		combo.append_text(&key);
 	}
 }
@@ -475,4 +548,26 @@ fn popula_perfis () -> BTreeMap<String, Expressoes> {
 	perfis.insert("Decimal".to_string(), decimal);
 	perfis.insert("Graus, minutos e segundos".to_string(), gms);
 	perfis
+}
+
+fn remove_perfil (	combo: &ComboBoxText,
+					perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
+
+	match combo.get_active_text() {
+			Some(_ativo) => {
+
+				let perfil = combo.get_active_text().unwrap();
+
+				let mut map: RefMut<_> = perfis.borrow_mut();
+
+				map.remove(perfil.as_str());
+				combo.remove_all();
+
+				for (key, _value) in map.iter() {
+						println!("{:?}", key);
+					combo.append_text(&key);
+				}
+			},
+			None =>	{},
+	}
 }
