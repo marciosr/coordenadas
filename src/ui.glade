@@ -149,11 +149,6 @@
       </object>
     </child>
   </object>
-  <object class="GtkImage" id="image1">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-add</property>
-  </object>
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
     <property name="margin_left">2</property>
@@ -344,27 +339,29 @@ A codificação deverá ser UTF-8.</property>
                     </child>
                     <child>
                       <object class="GtkButton" id="bt_ad">
+                        <property name="label">gtk-add</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="image">image1</property>
-                        <property name="always_show_image">True</property>
+                        <property name="tooltip_text" translatable="yes">Adiciona perfil de expressões regulares.</property>
+                        <property name="use_stock">True</property>
                       </object>
                       <packing>
-                        <property name="left_attach">2</property>
+                        <property name="left_attach">1</property>
                         <property name="top_attach">1</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkButton" id="bt_rm">
+                        <property name="label">gtk-remove</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="image">image3</property>
-                        <property name="always_show_image">True</property>
+                        <property name="tooltip_text" translatable="yes">Remove perfil de expressões regulares selecionado.</property>
+                        <property name="use_stock">True</property>
                       </object>
                       <packing>
-                        <property name="left_attach">1</property>
+                        <property name="left_attach">2</property>
                         <property name="top_attach">1</property>
                       </packing>
                     </child>
@@ -545,10 +542,5 @@ A codificação deverá ser UTF-8.</property>
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkImage" id="image3">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-delete</property>
   </object>
 </interface>
