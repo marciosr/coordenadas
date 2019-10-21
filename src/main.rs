@@ -126,7 +126,6 @@ impl MainWindow {
 			});
 		}
 		
-
 		{
 			let combo = cb_perfis.clone();
 			let ent_1 = ent_latitude.clone();
@@ -151,8 +150,6 @@ impl MainWindow {
 		}
 
 		{
-			// let ent_latitude_clone = ent_latitude.clone();
-			// let ent_longitude_clone = ent_longitude.clone();
 			let cb_perfis_clone = cb_perfis.clone();
 			let perfis_clone0 = perfis.clone();
 			bt_ad.connect_clicked(move |_| {
@@ -161,8 +158,7 @@ impl MainWindow {
 				let cadastra_clone = cadastra.clone();
 				let cadastra_clone0 = cadastra.clone();
 				let cb_perfis_clone2 = cb_perfis_clone.clone();
-				// let ent_latitude_clone2 = ent_latitude_clone.clone();
-				// let ent_longitude_clone2 = ent_longitude_clone.clone();
+
 				let perfis_clone1 = perfis_clone0.clone();
 				cadastra.bt_preencher.connect_clicked(move|_|{
 
@@ -203,19 +199,18 @@ impl MainWindow {
 					cadastra_clone0.dialog.destroy();
 				});
 
-
-
-				cadastra.dialog.run();
-
-				{
-					let dialog_clone = cadastra.dialog.clone();
-					cadastra.dialog.connect_close(move |_| {
+				// { // Não faz diferença manter esse código, o diálogo precisa de dois cliuques no botão de fechar
+					 // para ser fechado	.
+				// 	let dialog_clone = cadastra.dialog.clone();
+				// 	cadastra.dialog.connect_close(move |_| {
 						//gtk::Dialog::destroy(&dialog_clone);
-						dialog_clone.destroy();
+						//dialog_clone.destroy();
+						//gtk::Dialog::destroy(&dialog_clone);
 						//main_quit();
 						//Inhibit(false)
-					});
-				}
+				// 	});
+				// }
+				cadastra.dialog.run();
 
 			});
 		}
@@ -258,8 +253,6 @@ impl MainWindow {
 			});
 		}
 
-
-
 		MainWindow {
 	        glade,
 	        window,
@@ -273,8 +266,6 @@ impl MainWindow {
 	        rv_notifica,
 	        lb_notifica,
 	        cb_perfis,
-	        //dialog,
-			//bt_teste,
 			bt_ad,
 			bt_rm
 		}
@@ -303,6 +294,16 @@ impl Cadastra {
 		let bt_preencher: Button = glade.get_object("bt_preencher").unwrap();
 
 		// dialog.add(&bt_fecha_dialogo);
+
+		{
+		 	let dialog_clone = dialog.clone();
+		 	dialog.connect_destroy(move |_| {
+				gtk::Dialog::destroy(&dialog_clone);
+				dialog_clone.destroy();
+				//main_quit();
+				//Inhibit(false)
+		 	});
+		}
 
 		let cadastra = Rc::new(Self {
 			dialog,
