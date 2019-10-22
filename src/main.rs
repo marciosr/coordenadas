@@ -35,7 +35,7 @@ pub struct MainWindow {
 
 impl MainWindow {
 	pub fn new() -> MainWindow {
-		let glade_src = include_str!("ui.glade");
+		let glade_src = include_str!("main_window.glade");
 		let glade = gtk::Builder::new_from_string(glade_src);
 		let window: gtk::Window = glade.get_object("window").unwrap();
 		let ent_latitude: Entry = glade.get_object("ent_latitude").unwrap();
@@ -152,12 +152,14 @@ impl MainWindow {
 		{
 			let cb_perfis_clone = cb_perfis.clone();
 			let perfis_clone0 = perfis.clone();
+			let window_clone = window.clone();
 			bt_ad.connect_clicked(move |_| {
 
 				let cadastra = Cadastra::new();
 				let cadastra_clone = cadastra.clone();
-				let cadastra_clone0 = cadastra.clone();
 				let cb_perfis_clone2 = cb_perfis_clone.clone();
+
+				cadastra.dialog.set_transient_for(Some(&window_clone));
 
 				let perfis_clone1 = perfis_clone0.clone();
 				cadastra.bt_preencher.connect_clicked(move|_|{
@@ -195,22 +197,7 @@ impl MainWindow {
 					}
 				});
 
-				cadastra.bt_fecha_dialogo.connect_clicked (move |_| {
-					cadastra_clone0.dialog.destroy();
-				});
-
-				// { // Não faz diferença manter esse código, o diálogo precisa de dois cliuques no botão de fechar
-					 // para ser fechado	.
-				// 	let dialog_clone = cadastra.dialog.clone();
-				// 	cadastra.dialog.connect_close(move |_| {
-						//gtk::Dialog::destroy(&dialog_clone);
-						//dialog_clone.destroy();
-						//gtk::Dialog::destroy(&dialog_clone);
-						//main_quit();
-						//Inhibit(false)
-				// 	});
-				// }
-				cadastra.dialog.run();
+				cadastra.dialog.show();
 
 			});
 		}
@@ -273,7 +260,7 @@ impl MainWindow {
 }
 
 pub struct Cadastra {
-	pub dialog:					Dialog,
+	pub dialog:					Window,
 	pub ent_dialog_perfil:		Entry,
 	pub ent_dialog_latitude:	Entry,
 	pub ent_dialog_longitude:	Entry,
@@ -283,9 +270,9 @@ pub struct Cadastra {
 
 impl Cadastra {
 	fn new() -> Rc<Self> {
-		let glade_src = include_str!("ui.glade");
+		let glade_src = include_str!("dialog.glade");
 		let glade = gtk::Builder::new_from_string(glade_src);
-		let dialog: gtk::Dialog = glade.get_object("dialog").unwrap();
+		let dialog: gtk::Window = glade.get_object("dialog").unwrap();
 
 		let ent_dialog_perfil: Entry = glade.get_object("ent_dialog_perfil").unwrap();
 		let ent_dialog_latitude: Entry = glade.get_object("ent_dialog_latitude").unwrap();
@@ -293,16 +280,11 @@ impl Cadastra {
 		let bt_fecha_dialogo: Button = glade.get_object("bt_fecha_dialogo").unwrap();
 		let bt_preencher: Button = glade.get_object("bt_preencher").unwrap();
 
-		// dialog.add(&bt_fecha_dialogo);
-
 		{
-		 	let dialog_clone = dialog.clone();
-		 	dialog.connect_destroy(move |_| {
-				gtk::Dialog::destroy(&dialog_clone);
+			let dialog_clone = dialog.clone();
+			bt_fecha_dialogo.connect_clicked (move |_| {
 				dialog_clone.destroy();
-				//main_quit();
-				//Inhibit(false)
-		 	});
+			});
 		}
 
 		let cadastra = Rc::new(Self {
@@ -525,7 +507,7 @@ fn inicia_combo (	combo: &ComboBoxText,
 				) {
 	let map = perfis.borrow();
 	for (key, _value) in map.iter() {
-			println!("{:?}", key);
+			println!("Inciando... {:?}", key);
 		combo.append_text(&key);
 	}
 }
