@@ -52,18 +52,18 @@ impl MainWindow {
 		let bt_ad: Button = glade.get_object("bt_ad").unwrap();
 		let bt_rm: Button = glade.get_object("bt_rm").unwrap();
 
-		
+
 		let perfis_serializados = match carrega_perfis() {
 			Ok(perfis) => perfis,
 			Err(e) => { println!("Erro ao carregar os perfis: {}", e);
 					serializa_yaml(&popula_perfis())
 				},
 		};
-		
+
 		// Uso do Rc<RefCell<>> com o intuito de permitir a mutabilidade interna
 		// ou seja, que o conteúdo deste container seja mudado. Há um borrow checker
 		// no runtime, portanto há custo na execussão do código.
-		
+
 		let perfis: Rc<RefCell<_>> = Rc::new(RefCell::new(desserializa_yaml(perfis_serializados)));
 
 		inicia_combo (&cb_perfis, &perfis);
@@ -84,7 +84,7 @@ impl MainWindow {
 
 		let nome_perfil = cb_perfis.get_active_text().unwrap(); // Possível problema de unwrap sobre None
 		atualiza_campos(nome_perfil.to_string(), &ent_latitude, &ent_longitude, &perfis);
-		
+
 		{ // Bloco de execussão da busca
 			let bt_entrada_clone = bt_entrada.clone();
 			let bt_saida_clone = bt_saida.clone();
@@ -92,7 +92,7 @@ impl MainWindow {
 			let ent_longitude_clone = ent_longitude.clone();
 			let ent_saida_clone = ent_saida.clone();
 			let rv_notifica_clone = rv_notifica.clone();
-			
+
 			let lb_notifica_clone = lb_notifica.clone();
 
 			bt_run.connect_clicked(move |_| {
@@ -118,20 +118,20 @@ impl MainWindow {
 				} else { println!("Faltam parâmetros!"); }
 			});
 		}
-		
+
 		{
 			let rv_notifica_clone2 = rv_notifica.clone();
 			bt_fecha_notifica.connect_clicked(move |_| {
 				rv_notifica_clone2.set_reveal_child(false);
 			});
 		}
-		
+
 		{
 			let combo = cb_perfis.clone();
 			let ent_1 = ent_latitude.clone();
 			let ent_2 = ent_longitude.clone();
 			let perfis_clone = perfis.clone();
-			
+
 			combo.connect_changed(move |cb| {
 				println!("Linha 114: O id do combo é antes da mudança: {:?}", cb.get_active_id());
 				match cb.get_active_text() {
@@ -201,18 +201,18 @@ impl MainWindow {
 
 			});
 		}
-		
+
 		{
-			let perfis_clone = perfis.clone();
-			window.connect_delete_event(move |_,_| {
-				let map = perfis_clone.borrow();
-				match salva_perfis(serializa_yaml(&map)) {
-					Ok(a) => a,
-					Err(e) => println!("Erro ao salvar os perfis: {}", e),
-				};
-				main_quit();
-				Inhibit(false)
-			});
+			// let perfis_clone = perfis.clone();
+			// window.connect_delete_event(move |_,_| {
+			// 	let map = perfis_clone.borrow();
+			// 	match salva_perfis(serializa_yaml(&map)) {
+			// 		Ok(a) => a,
+			// 		Err(e) => println!("Erro ao salvar os perfis: {}", e),
+			// 	};
+			// 	main_quit();
+			// 	Inhibit(false)
+			// });
 		}
 
 		{
@@ -227,7 +227,7 @@ impl MainWindow {
 					Err(e) => println!("Erro ao salvar os perfis: {}", e),
 				};
 				main_quit();
-				Inhibit(false);
+				//Inhibit(false);
 			});
 		}
 
@@ -306,7 +306,7 @@ fn main() {
 	}
 
 	let app = MainWindow::new();
-	app.window.show_all();
+	app.window.show();
 
     gtk::main();
 }

@@ -1,28 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkWindow" id="dialog">
-    <property name="can_focus">False</property>
-    <property name="resizable">False</property>
-    <property name="modal">True</property>
+    <property name="resizable">0</property>
+    <property name="modal">1</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
-    <property name="skip_taskbar_hint">True</property>
-    <property name="skip_pager_hint">True</property>
     <child type="titlebar">
       <object class="GtkHeaderBar">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="hexpand">True</property>
-        <property name="vexpand">True</property>
-        <property name="has_subtitle">False</property>
+        <property name="hexpand">1</property>
+        <property name="vexpand">1</property>
+        <property name="has_subtitle">0</property>
         <child>
           <object class="GtkButton" id="bt_fecha_dialogo">
             <property name="label" translatable="yes">Cancela</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="can_focus">1</property>
+            <property name="receives_default">1</property>
             <property name="tooltip_text" translatable="yes">Cancela a operação e fecha o diálogo.</property>
             <style>
               <class name="destructive-action"/>
@@ -32,95 +25,78 @@
         <child>
           <object class="GtkButton" id="bt_preencher">
             <property name="label" translatable="yes">Preencher</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="can_focus">1</property>
+            <property name="receives_default">1</property>
             <property name="tooltip_text" translatable="yes">Cria novo perfil com os dados informados.</property>
-            <property name="image_position">right</property>
+
             <style>
               <class name="suggested-action"/>
             </style>
+            <layout>
+              <property name="pack-type">end</property>
+              <property name="position">1</property>
+            </layout>
           </object>
-          <packing>
-            <property name="pack_type">end</property>
-            <property name="position">1</property>
-          </packing>
         </child>
       </object>
     </child>
     <child>
       <object class="GtkGrid">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="margin_left">10</property>
-        <property name="margin_right">10</property>
-        <property name="margin_top">10</property>
-        <property name="margin_bottom">10</property>
         <property name="row_spacing">2</property>
         <property name="column_spacing">2</property>
-        <property name="column_homogeneous">True</property>
+        <property name="column_homogeneous">1</property>
         <child>
           <object class="GtkLabel">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <property name="label" translatable="yes">Expressão para longitude</property>
+            <layout>
+			  <property name="left-attach">0</property>
+              <property name="top-attach">2</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left_attach">0</property>
-            <property name="top_attach">2</property>
-          </packing>
         </child>
         <child>
           <object class="GtkEntry" id="ent_dialog_longitude">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
+            <property name="can_focus">1</property>
+            <layout>
+              <property name="left-attach">1</property>
+              <property name="top-attach">2</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left_attach">1</property>
-            <property name="top_attach">2</property>
-          </packing>
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <property name="label" translatable="yes">Expressão para latitude</property>
+            <layout>
+              <property name="left-attach">0</property>
+              <property name="top-attach">1</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left_attach">0</property>
-            <property name="top_attach">1</property>
-          </packing>
         </child>
         <child>
           <object class="GtkEntry" id="ent_dialog_latitude">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
+            <property name="can_focus">1</property>
+            <layout>
+              <property name="left-attach">1</property>
+              <property name="top-attach">1</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left_attach">1</property>
-            <property name="top_attach">1</property>
-          </packing>
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <property name="label" translatable="yes">Nome do modelo</property>
+            <layout>
+              <property name="left-attach">0</property>
+              <property name="top-attach">0</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left_attach">0</property>
-            <property name="top_attach">0</property>
-          </packing>
         </child>
         <child>
           <object class="GtkEntry" id="ent_dialog_perfil">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
+            <property name="can_focus">1</property>
+            <layout>
+              <property name="left-attach">1</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left_attach">1</property>
-            <property name="top_attach">0</property>
-          </packing>
         </child>
       </object>
     </child>

@@ -6,8 +6,13 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[dependencies.gio]
+git = "https://github.com/gtk-rs/gio"
+
+[dependencies.gtk]
+package = "gtk4"
+git = "https://github.com/gtk-rs/gtk4"
 [dependencies]
-gtk = "0.7.0"
 regex = "1.1.7"
 csv = "1.1"
 serde = { version = "1.0", features = ["derive"] }
