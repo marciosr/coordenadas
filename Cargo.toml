@@ -1,6 +1,6 @@
 [package]
-name = "coordenadas"
-version = "0.2.1"
+name = "coordenadas-gtk4"
+version = "0.3.0"
 authors = ["marcio"]
 edition = "2018"
 

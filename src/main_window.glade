@@ -3,7 +3,7 @@
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkApplicationWindow" id="window">
-    <property name="can_focus">False</property>
+    <!-- <property name="can_focus">False</property> -->
     <property name="resizable">False</property>
     <child type="titlebar">
       <object class="GtkHeaderBar">
@@ -106,11 +106,11 @@
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Tipo de coordenadas</property>
+                        <property name="label" translatable="yes">Tipos de coordenadas (Perfis)</property>
                         <layout>
 							<property name="left-attach">0</property>
 		                    <property name="top-attach">0</property>
-		                    <property name="line-span">2</property>
+		                    <!-- <property name="line-span">2</property> -->
                         </layout>
                       </object>
                     </child>
@@ -190,7 +190,7 @@ A codificação deverá ser UTF-8.</property>
                     </child>
                     <child>
                       <object class="GtkButton" id="bt_ad">
-                        <property name="label">gtk-add</property>
+                        <property name="label">Adiciona</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
@@ -203,7 +203,7 @@ A codificação deverá ser UTF-8.</property>
                     </child>
                     <child>
                       <object class="GtkButton" id="bt_rm">
-                        <property name="label">gtk-remove</property>
+                        <property name="label">Remove</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
