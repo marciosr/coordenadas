@@ -1,6 +1,4 @@
 extern crate gtk;
-//extern crate regex;
-
 
 use std::fs::File;
 use std::fs;
@@ -11,7 +9,6 @@ use std::rc::Rc;
 use std::cell::{RefCell, RefMut};
 use std::collections::BTreeMap;
 
-use gtk::*;
 use regex::Regex;
 use csv::*;
 use serde::{Serialize, Deserialize};
@@ -71,36 +68,14 @@ pub fn gera_csv (vec: Vec<String>,vec1: Vec<String>, uri2: PathBuf) -> Result<()
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Expressoes {
-	latitude: String,
-	longitude: String
-}
-
-pub fn set_entrys (	entry_latitude: &Entry,
-				entry_longitude: &Entry,
-				nome_perfil: &String,
-				perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
-	let map = perfis.borrow();
-
-	let expressoes = map.get(nome_perfil).unwrap();
-	entry_latitude.set_text(&expressoes.latitude);
-	entry_longitude.set_text(&expressoes.longitude);
-}
-
-pub fn adiciona_perfil (	perfil_n: String,
-						latitude_n: &String,
-						longitude_n: &String,
-						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
-
-	let expressoes = Expressoes { latitude: latitude_n.to_string(), longitude: longitude_n.to_string()};
-
-	let mut map: RefMut<_> = perfis.borrow_mut();
-	println!("O conteúdo dos perfils dentro da função adiciona perfi é: {:?}", map); // Para testes!
-	map.insert(perfil_n, expressoes);
+	pub latitude: String,
+	pub longitude: String
 }
 
 pub fn salva_perfis (serializado: String) -> std::io::Result<()> {
 	let mut file = File::create("perfis.yaml")?;
 	file.write_all(&serializado.as_bytes())?;
+	println!("Perfis salvos no disco.");
 
 	Ok(())
 }
@@ -132,23 +107,7 @@ pub fn desserializa_yaml (serializado: String) -> BTreeMap<String, Expressoes> {
 	desserializado
 }
 
-pub fn inicia_combo (	combo: &ComboBoxText,
-					perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>>
-				) {
-	let map = perfis.borrow();
-	for (key, _value) in map.iter() {
-			println!("Inciando... {:?}", key);
-		combo.append_text(&key);
-	}
-}
 
-pub fn atualiza_campos (	nome_perfil: String,
-						ent_latitude: &Entry,
-						ent_longitude: &Entry,
-						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
-
-	set_entrys(&ent_latitude, &ent_longitude, &String::from(nome_perfil), perfis);
-}
 
 pub fn popula_perfis () -> BTreeMap<String, Expressoes> {
 	let utm = Expressoes { latitude: String::from(r"\d.\d{3}.\d{3},\d{1,3}"), longitude: String::from(r" \d{3}.\d{3},\d{1,3}")};
@@ -163,24 +122,10 @@ pub fn popula_perfis () -> BTreeMap<String, Expressoes> {
 	perfis
 }
 
-pub fn remove_perfil (	combo: &ComboBoxText,
-					perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
 
-	match combo.get_active_text() {
-			Some(_ativo) => {
+pub fn remove_perfil (	perfil_atual: String,
+						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
+		let mut map: RefMut<_> = perfis.borrow_mut();
+		map.remove(perfil_atual.as_str());
 
-				let perfil = combo.get_active_text().unwrap();
-
-				let mut map: RefMut<_> = perfis.borrow_mut();
-
-				map.remove(perfil.as_str());
-				combo.remove_all();
-
-				for (key, _value) in map.iter() {
-						println!("{:?}", key);
-					combo.append_text(&key);
-				}
-			},
-			None =>	{},
-	}
 }

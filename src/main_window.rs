@@ -2,13 +2,15 @@ extern crate gtk;
 
 use std::fs;
 use std::rc::Rc;
-use std::cell::RefCell;
+use std::cell::{RefCell, RefMut};
+use std::collections::BTreeMap;
 
 use gtk::*;
 
 use crate::dialogo_cadastra_perfis::Cadastra;
 use crate::frontend_data_check::Dados;
 use crate::backend::*;
+//use crate::backend::Expressoes;
 
 
 pub struct MainWindow {
@@ -207,9 +209,8 @@ impl MainWindow {
 								&cadastra_clone.ent_dialog_longitude
 																.get_text().unwrap().to_string(),
 								&perfis_clone1
-								);
-							// Por padrão ao adicionar um perfil, este passa a ser o ativo
-							// atualiza_campos (&nome_perfil.to_string(), ent_latitude_clone2, ent_longitude_clone2);
+							);
+
 							cadastra_clone.dialog.destroy();
 					}
 				});
@@ -228,7 +229,7 @@ impl MainWindow {
 					Err(e) => println!("Erro ao salvar os perfis: {}", e),
 				};
 				main_quit();
-				Inhibit(false)
+				Inhibit(false) // Não funciona no gtk4
 			});
 		}
 
@@ -237,14 +238,12 @@ impl MainWindow {
 
 			self.bt_fechar.connect_clicked(move |_| {
 				let map = perfis_clone.borrow();
-				println!("variável pefris para a função salvar {:?}", perfis_clone);
-				println!("variável map para a função salvar {:?}", map);
 				match salva_perfis(serializa_yaml(&map)) {
 					Ok(a) => a,
 					Err(e) => println!("Erro ao salvar os perfis: {}", e),
 				};
 				main_quit();
-				Inhibit(false);
+				Inhibit(false); // Não funciona no gtk4
 			});
 		}
 
@@ -253,7 +252,15 @@ impl MainWindow {
 			let perfis_clone = perfis.clone();
 
 			self.bt_rm.connect_clicked(move|_| {
-				remove_perfil(&combo, &perfis_clone);
+				//remove_perfil(&combo, &perfis_clone);
+				match combo.get_active_text() {
+					Some(perfil_ativo) => {
+						remove_perfil (perfil_ativo.to_string(), &perfis_clone);
+						atualiza_combo (&combo, &perfis_clone);
+					},
+					None =>	{},
+				}
+
 			});
 		}
 	self.window.show_all();
@@ -261,4 +268,53 @@ impl MainWindow {
 	}
 }
 
+pub fn inicia_combo (	combo: &ComboBoxText,
+						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>>) {
+	let map = perfis.borrow();
+	for (key, _value) in map.iter() {
+			println!("Inciando... {:?}", key);
+		combo.append_text(&key);
+	}
+}
 
+pub fn atualiza_campos (	nome_perfil: String,
+							ent_latitude: &Entry,
+							ent_longitude: &Entry,
+							perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
+
+	set_entrys(&ent_latitude, &ent_longitude, &String::from(nome_perfil), perfis);
+}
+
+pub fn atualiza_combo (	combo: &ComboBoxText,
+						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
+	combo.remove_all();
+
+	let map = perfis.borrow();
+
+	for (key, _value) in map.iter() {
+		combo.append_text(&key);
+	}
+}
+
+pub fn set_entrys (	entry_latitude: &Entry,
+					entry_longitude: &Entry,
+					nome_perfil: &String,
+					perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
+	let map = perfis.borrow();
+
+	let expressoes = map.get(nome_perfil).unwrap();
+	entry_latitude.set_text(&expressoes.latitude);
+	entry_longitude.set_text(&expressoes.longitude);
+}
+
+pub fn adiciona_perfil (perfil_n: String,
+						latitude_n: &String,
+						longitude_n: &String,
+						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
+
+	let expressoes = Expressoes { latitude: latitude_n.to_string(), longitude: longitude_n.to_string()};
+
+	let mut map: RefMut<_> = perfis.borrow_mut();
+	println!("O conteúdo dos perfils dentro da função adiciona perfi é: {:?}", map); // Para testes!
+	map.insert(perfil_n, expressoes);
+}
