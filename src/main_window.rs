@@ -10,8 +10,6 @@ use gtk::*;
 use crate::dialogo_cadastra_perfis::Cadastra;
 use crate::frontend_data_check::Dados;
 use crate::backend::*;
-//use crate::backend::Expressoes;
-
 
 pub struct MainWindow {
 	pub glade:				Builder,

@@ -13,8 +13,10 @@ use regex::Regex;
 use csv::*;
 use serde::{Serialize, Deserialize};
 
-
-pub fn analisa_texto (uri_entrada: PathBuf, uri_saida: PathBuf, expressao_n: String,  expressao_e: String) -> Result<()> {
+pub fn analisa_texto (  uri_entrada: PathBuf,
+                        uri_saida: PathBuf,
+                        expressao_n: String,
+                        expressao_e: String ) -> Result<()> {
 	let texto = fs::read_to_string(uri_entrada)?; // Tirei o método .unwrap() e coloquei o operador ?
 	let text = &String::from(texto);
 
@@ -54,7 +56,9 @@ pub fn analisa_texto (uri_entrada: PathBuf, uri_saida: PathBuf, expressao_n: Str
     Ok(())
 }
 
-pub fn gera_csv (vec: Vec<String>,vec1: Vec<String>, uri2: PathBuf) -> Result<()> {
+pub fn gera_csv (   vec: Vec<String>,
+                    vec1: Vec<String>,
+                    uri2: PathBuf ) -> Result<()> {
 	let mut wtr = Writer::from_path(uri2)?;
 	wtr.write_record(&["Latitude","Longitude"])?;
 
@@ -86,12 +90,14 @@ pub fn carrega_perfis () -> std::io::Result<(String)> {
 }
 
 #[allow(dead_code)]
-fn serializa (map: &BTreeMap<String, Expressoes>) -> String {
+fn serializa (  map: &BTreeMap<String,
+                Expressoes>) -> String {
 	let serializado = serde_json::to_string(&map).unwrap();
 	serializado
 }
 
-pub fn serializa_yaml (map: &BTreeMap<String, Expressoes>) -> String {
+pub fn serializa_yaml ( map: &BTreeMap<String,
+                        Expressoes>) -> String {
 	let serializado = serde_yaml::to_string(&map).unwrap();
 	serializado
 }
@@ -107,8 +113,6 @@ pub fn desserializa_yaml (serializado: String) -> BTreeMap<String, Expressoes> {
 	desserializado
 }
 
-
-
 pub fn popula_perfis () -> BTreeMap<String, Expressoes> {
 	let utm = Expressoes { latitude: String::from(r"\d.\d{3}.\d{3},\d{1,3}"), longitude: String::from(r" \d{3}.\d{3},\d{1,3}")};
 	let decimal = Expressoes { latitude: String::from(r"[+-]?[3-4]\d\.\d{6}"), longitude: String::from(r"[+-]?[0-2]\d\.\d{6}")};
@@ -121,7 +125,6 @@ pub fn popula_perfis () -> BTreeMap<String, Expressoes> {
 	perfis.insert("Graus, minutos e segundos".to_string(), gms);
 	perfis
 }
-
 
 pub fn remove_perfil (	perfil_atual: String,
 						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
