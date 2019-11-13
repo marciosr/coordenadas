@@ -17,6 +17,7 @@ pub fn analisa_texto (  uri_entrada: PathBuf,
                         uri_saida: PathBuf,
                         expressao_n: String,
                         expressao_e: String ) -> Result<()> {
+
 	let texto = fs::read_to_string(uri_entrada)?; // Tirei o método .unwrap() e coloquei o operador ?
 	let text = &String::from(texto);
 
@@ -26,12 +27,11 @@ pub fn analisa_texto (  uri_entrada: PathBuf,
 	// r"\d.\d{3}.\d{3},\d{3}" -> quando utilizado através do gtk_entry não foi
 	// necessário o caracteres r e as aspas, apenas
 	// a expressão regular propriamente dita.
-	println!("Expressão latitude: {}", expressao_n);
-	println!("Expressão longitude: {}", expressao_e);
+	// println!("Expressão latitude: {}", expressao_n);
+	// println!("Expressão longitude: {}", expressao_e);
     for correspondencia in Regex::new(&expressao_n).unwrap().find_iter(text) {
     	let start = correspondencia.start() as usize;
     	let end = correspondencia.end() as usize;
-
     	vetor1.push(&text[start..end]);
     }
 
@@ -92,18 +92,21 @@ pub fn carrega_perfis () -> std::io::Result<(String)> {
 #[allow(dead_code)]
 fn serializa (  map: &BTreeMap<String,
                 Expressoes>) -> String {
+
 	let serializado = serde_json::to_string(&map).unwrap();
 	serializado
 }
 
 pub fn serializa_yaml ( map: &BTreeMap<String,
                         Expressoes>) -> String {
+
 	let serializado = serde_yaml::to_string(&map).unwrap();
 	serializado
 }
 
 #[allow(dead_code)]
 pub fn desserializa (serializado: String) -> BTreeMap<String, Expressoes> {
+
 	let desserializado: BTreeMap<String, Expressoes> = serde_json::from_str(&serializado).unwrap();
 	desserializado
 }
@@ -128,7 +131,8 @@ pub fn popula_perfis () -> BTreeMap<String, Expressoes> {
 
 pub fn remove_perfil (	perfil_atual: String,
 						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
-		let mut map: RefMut<_> = perfis.borrow_mut();
-		map.remove(perfil_atual.as_str());
+
+	let mut map: RefMut<_> = perfis.borrow_mut();
+	map.remove(perfil_atual.as_str());
 
 }

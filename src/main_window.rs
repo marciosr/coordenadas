@@ -49,19 +49,19 @@ impl MainWindow {
 		let bt_rm: Button = glade.get_object("bt_rm").unwrap();
 
 		MainWindow {
-	        glade,
-	        window,
-	        ent_latitude,
-	        ent_longitude,
-	        ent_saida,
-	        bt_fechar,
-	        bt_run,
-	        bt_entrada,
-	        bt_saida,
-	        bt_fecha_notifica,
-	        rv_notifica,
-	        lb_notifica,
-	        cb_perfis,
+			glade,
+			window,
+			ent_latitude,
+			ent_longitude,
+			ent_saida,
+			bt_fechar,
+			bt_run,
+			bt_entrada,
+			bt_saida,
+			bt_fecha_notifica,
+			rv_notifica,
+			lb_notifica,
+			cb_perfis,
 			bt_ad,
 			bt_rm
 		}
@@ -150,13 +150,10 @@ impl MainWindow {
 			let perfis_clone = perfis.clone();
 
 			combo.connect_changed(move |cb| {
-				println!("Linha 114: O id do combo é antes da mudança: {:?}", cb.get_active_id());
 				match cb.get_active_text() {
 					Some(_texto) => {
 						let nome_perfil = cb.get_active_text().unwrap();
 						atualiza_campos(nome_perfil.to_string(), &ent_1, &ent_2, &perfis_clone);
-						println!("Linha 114: nome do perfil é: {}", nome_perfil);
-						println!("Linha 114: O id do combo é: {:?}", cb.get_active_id());
 					},
 					None => println!("Não há texto ativo"),
 
@@ -270,15 +267,14 @@ pub fn inicia_combo (	combo: &ComboBoxText,
 						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>>) {
 	let map = perfis.borrow();
 	for (key, _value) in map.iter() {
-			println!("Inciando... {:?}", key);
 		combo.append_text(&key);
 	}
 }
 
-pub fn atualiza_campos (	nome_perfil: String,
-							ent_latitude: &Entry,
-							ent_longitude: &Entry,
-							perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
+pub fn atualiza_campos(	nome_perfil: String,
+						ent_latitude: &Entry,
+						ent_longitude: &Entry,
+						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
 
 	set_entrys(&ent_latitude, &ent_longitude, &String::from(nome_perfil), perfis);
 }
@@ -313,6 +309,6 @@ pub fn adiciona_perfil (perfil_n: String,
 	let expressoes = Expressoes { latitude: latitude_n.to_string(), longitude: longitude_n.to_string()};
 
 	let mut map: RefMut<_> = perfis.borrow_mut();
-	println!("O conteúdo dos perfils dentro da função adiciona perfi é: {:?}", map); // Para testes!
+	//println!("O conteúdo dos perfils dentro da função adiciona perfi é: {:?}", map); // Para testes!
 	map.insert(perfil_n, expressoes);
 }
