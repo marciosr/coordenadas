@@ -1,11 +1,13 @@
 extern crate gtk;
+extern crate gio;
 
 use std::fs;
 use std::rc::Rc;
 use std::cell::{RefCell, RefMut};
 use std::collections::BTreeMap;
 
-use gtk::*;
+use gtk::prelude::*;
+use gtk::{Window, Builder, Button, Entry, FileChooserButton, ComboBoxText, Revealer, Label, main_quit};
 
 use crate::dialogo_cadastra_perfis::Cadastra;
 use crate::frontend_data_check::Dados;
@@ -33,20 +35,20 @@ impl MainWindow {
 	pub fn new() -> MainWindow {
 		let glade_src = include_str!("main_window.glade");
 		let glade = gtk::Builder::new_from_string(glade_src);
-		let window: gtk::Window = glade.get_object("window").unwrap();
-		let ent_latitude: Entry = glade.get_object("ent_latitude").unwrap();
-		let ent_longitude: Entry = glade.get_object("ent_longitude").unwrap();
-		let ent_saida: Entry = glade.get_object("ent_saida").unwrap();
-		let bt_fechar: Button = glade.get_object("bt_fechar").unwrap();
-		let bt_run: Button = glade.get_object("bt_run").unwrap();
-		let bt_entrada: FileChooserButton = glade.get_object("bt_entrada").unwrap();
-		let bt_saida: FileChooserButton = glade.get_object("bt_saida").unwrap();
-		let bt_fecha_notifica: Button = glade.get_object("bt_fecha_notifica").unwrap();
-		let rv_notifica: Revealer = glade.get_object("rv_notifica").unwrap();
-		let lb_notifica: Label = glade.get_object("label2").unwrap();
-		let cb_perfis: ComboBoxText = glade.get_object("cb_perfis").unwrap();
-		let bt_ad: Button = glade.get_object("bt_ad").unwrap();
-		let bt_rm: Button = glade.get_object("bt_rm").unwrap();
+		let window: gtk::Window = glade.get_object("window").expect("Não foi possivel encontrar o widget");
+		let ent_latitude: Entry = glade.get_object("ent_latitude").expect("Não foi possivel encontrar o widget");
+		let ent_longitude: Entry = glade.get_object("ent_longitude").expect("Não foi possivel encontrar o widget");
+		let ent_saida: Entry = glade.get_object("ent_saida").expect("Não foi possivel encontrar o widget");
+		let bt_fechar: Button = glade.get_object("bt_fechar").expect("Não foi possivel encontrar o widget");
+		let bt_run: Button = glade.get_object("bt_run").expect("Não foi possivel encontrar o widget");
+		let bt_entrada: FileChooserButton = glade.get_object("bt_entrada").expect("Não foi possivel encontrar o widget");
+		let bt_saida: FileChooserButton = glade.get_object("bt_saida").expect("Não foi possivel encontrar o widget");
+		let bt_fecha_notifica: Button = glade.get_object("bt_fecha_notifica").expect("Não foi possivel encontrar o widget");
+		let rv_notifica: Revealer = glade.get_object("rv_notifica").expect("Não foi possivel encontrar o widget");
+		let lb_notifica: Label = glade.get_object("label2").expect("Não foi possivel encontrar o widget");
+		let cb_perfis: ComboBoxText = glade.get_object("cb_perfis").expect("Não foi possivel encontrar o widget");
+		let bt_ad: Button = glade.get_object("bt_ad").expect("Não foi possivel encontrar o widget");
+		let bt_rm: Button = glade.get_object("bt_rm").expect("Não foi possivel encontrar o widget");
 
 		MainWindow {
 			glade,
@@ -103,6 +105,7 @@ impl MainWindow {
 		atualiza_campos(nome_perfil.to_string(), &self.ent_latitude, &self.ent_longitude, &perfis);
 
 		{ // Bloco de execussão da busca
+
 			let bt_entrada_clone = self.bt_entrada.clone();
 			let bt_saida_clone = self.bt_saida.clone();
 			let ent_latitude_clone = self.ent_latitude.clone();
