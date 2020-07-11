@@ -14,6 +14,6 @@ fn main() {
 
 	MainWindow::new().run();
 
-    gtk::main();
+  gtk::main();
 }
 

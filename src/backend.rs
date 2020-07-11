@@ -84,7 +84,7 @@ pub fn salva_perfis (serializado: String) -> std::io::Result<()> {
 	Ok(())
 }
 
-pub fn carrega_perfis () -> std::io::Result<(String)> {
+pub fn carrega_perfis () -> std::io::Result<String> {
 	let file = fs::read_to_string("perfis.yaml")?;
 	Ok(file)
 }
@@ -97,8 +97,7 @@ fn serializa (  map: &BTreeMap<String,
 	serializado
 }
 
-pub fn serializa_yaml ( map: &BTreeMap<String,
-                        Expressoes>) -> String {
+pub fn serializa_yaml ( map: &BTreeMap<String, Expressoes>) -> String {
 
 	let serializado = serde_yaml::to_string(&map).unwrap();
 	serializado

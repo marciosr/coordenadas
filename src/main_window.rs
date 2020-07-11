@@ -7,35 +7,35 @@ use std::cell::{RefCell, RefMut};
 use std::collections::BTreeMap;
 
 use gtk::prelude::*;
-use gtk::{Window, Builder, Button, Entry, FileChooserButton, ComboBoxText, Revealer, Label, main_quit};
+use gtk::{ApplicationWindow, Builder, Button, Entry, FileChooserButton, ComboBoxText, Revealer, Label, main_quit};
 
 use crate::dialogo_cadastra_perfis::Cadastra;
 use crate::frontend_data_check::Dados;
 use crate::backend::*;
 
 pub struct MainWindow {
-	pub glade:				Builder,
-	pub window:				Window,
-	pub ent_latitude:		Entry,
-	pub ent_longitude:		Entry,
-	pub ent_saida:			Entry,
-	pub bt_fechar:			Button,
-	pub bt_run:				Button,
-	pub bt_entrada:			FileChooserButton,
-	pub bt_saida:			FileChooserButton,
+	pub glade:							Builder,
+	pub window:							ApplicationWindow,
+	pub ent_latitude:				Entry,
+	pub ent_longitude:			Entry,
+	pub ent_saida:					Entry,
+	pub bt_fechar:					Button,
+	pub bt_run:							Button,
+	pub bt_entrada:					FileChooserButton,
+	pub bt_saida:						FileChooserButton,
 	pub bt_fecha_notifica:	Button,
-	pub rv_notifica:		Revealer,
-	pub lb_notifica:		Label,
-	pub cb_perfis:			ComboBoxText,
-	pub bt_ad:				Button,
-	pub bt_rm:				Button
+	pub rv_notifica:				Revealer,
+	pub lb_notifica:				Label,
+	pub cb_perfis:					ComboBoxText,
+	pub bt_ad:							Button,
+	pub bt_rm:							Button
 }
 
 impl MainWindow {
 	pub fn new() -> MainWindow {
 		let glade_src = include_str!("main_window.glade");
-		let glade = gtk::Builder::new_from_string(glade_src);
-		let window: gtk::Window = glade.get_object("window").expect("Não foi possivel encontrar o widget");
+		let glade = gtk::Builder::from_string(glade_src);
+		let window: gtk::ApplicationWindow = glade.get_object("window").expect("Não foi possivel encontrar o widget");
 		let ent_latitude: Entry = glade.get_object("ent_latitude").expect("Não foi possivel encontrar o widget");
 		let ent_longitude: Entry = glade.get_object("ent_longitude").expect("Não foi possivel encontrar o widget");
 		let ent_saida: Entry = glade.get_object("ent_saida").expect("Não foi possivel encontrar o widget");
@@ -70,7 +70,6 @@ impl MainWindow {
 	}
 
 	pub fn run(self) {
-
 
 		let perfis_serializados = match carrega_perfis() {
 			Ok(perfis) => perfis,
@@ -181,19 +180,19 @@ impl MainWindow {
 				let perfis_clone1 = perfis_clone0.clone();
 				cadastra.bt_preencher.connect_clicked(move|_|{
 
-					if	&cadastra_clone.ent_dialog_latitude.get_text().unwrap().to_string() == "" ||
-						&cadastra_clone.ent_dialog_longitude.get_text().unwrap().to_string() == "" ||
-						&cadastra_clone.ent_dialog_perfil.get_text().unwrap().to_string() == "" {
+					if	&cadastra_clone.ent_dialog_latitude.get_text().to_string() == "" ||
+						&cadastra_clone.ent_dialog_longitude.get_text().to_string() == "" ||
+						&cadastra_clone.ent_dialog_perfil.get_text().to_string() == "" {
 						} else {
 
 							let nome_perfil =  &cadastra_clone.ent_dialog_perfil
-																.get_text().unwrap().to_string();
+																.get_text().to_string();
 
 							adiciona_perfil (	nome_perfil.to_string(),
 												&cadastra_clone.ent_dialog_latitude
-																.get_text().unwrap().to_string(),
+																.get_text().to_string(),
 												&cadastra_clone.ent_dialog_longitude
-																.get_text().unwrap().to_string(),
+																.get_text().to_string(),
 												&perfis_clone1
 											);
 							cb_perfis_clone2.append_text(nome_perfil);
@@ -203,13 +202,13 @@ impl MainWindow {
 								o conteúdo dos perfiles no closure é: {:?}",
 								nome_perfil,
 								&cadastra_clone.ent_dialog_latitude
-																.get_text().unwrap().to_string(),
+																.get_text().to_string(),
 								&cadastra_clone.ent_dialog_longitude
-																.get_text().unwrap().to_string(),
+																.get_text().to_string(),
 								&perfis_clone1
 							);
 
-							cadastra_clone.dialog.destroy();
+							cadastra_clone.dialog.close();
 					}
 				});
 

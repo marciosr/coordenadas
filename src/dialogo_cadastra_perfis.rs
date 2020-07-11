@@ -18,7 +18,7 @@ pub struct Cadastra {
 impl Cadastra {
 	pub fn new() -> Rc<Self> {
 		let glade_src = include_str!("dialogo_cadastra_perfis.glade");
-		let glade = gtk::Builder::new_from_string(glade_src);
+		let glade = gtk::Builder::from_string(glade_src);
 		let dialog: gtk::Window = glade.get_object("dialog").expect("Não foi possivel encontrar o widget");
 
 		let ent_dialog_perfil: Entry = glade.get_object("ent_dialog_perfil").expect("Não foi possivel encontrar o widget");
@@ -30,7 +30,7 @@ impl Cadastra {
 		{
 			let dialog_clone = dialog.clone();
 			bt_fecha_dialogo.connect_clicked (move |_| {
-				dialog_clone.destroy();
+				dialog_clone.close();
 			});
 		}
 

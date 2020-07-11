@@ -24,9 +24,9 @@ impl Dados {
 		let mut uri_saida = bt_saida.get_filename().unwrap();
 		println!("URI saída é: {:?}", bt_saida.get_filename().unwrap());
 
-		let latitude: String = ent_exp1.get_text().unwrap().to_string();
-		let longitude: String = ent_exp2.get_text().unwrap().to_string();
-		let nome_csv: String = ent_nome.get_text().unwrap().to_string();
+		let latitude: String = ent_exp1.get_text().to_string();
+		let longitude: String = ent_exp2.get_text().to_string();
+		let nome_csv: String = ent_nome.get_text().to_string();
 
 		uri_saida.push(&nome_csv);
 		uri_saida.set_extension("csv");
