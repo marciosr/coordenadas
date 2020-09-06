@@ -16,7 +16,7 @@ pub fn analisa_texto (  uri_entrada: 	PathBuf,
                         expressao_n:	String,
                         expressao_e:	String ) -> Result<()> {
 
-	let texto = fs::read_to_string(uri_entrada)?; // Tirei o método .unwrap() e coloquei o operador ?
+	let texto = fs::read_to_string(uri_entrada)?;
 	let text = &String::from(texto);
 
 	const VEC_SIZE: usize = 13;
