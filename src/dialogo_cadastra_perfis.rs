@@ -7,12 +7,12 @@ use gtk::{Window, Entry, Button};
 use std::rc::Rc;
 
 pub struct Cadastra {
-	pub dialog:					Window,
+	pub dialog:								Window,
 	pub ent_dialog_perfil:		Entry,
 	pub ent_dialog_latitude:	Entry,
 	pub ent_dialog_longitude:	Entry,
-	pub bt_fecha_dialogo:		Button,
-	pub bt_preencher:			Button
+	pub bt_fecha_dialogo:			Button,
+	pub bt_preencher:					Button
 }
 
 impl Cadastra {

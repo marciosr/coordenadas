@@ -7,7 +7,8 @@ use std::cell::{RefCell, RefMut};
 use std::collections::BTreeMap;
 
 use gtk::prelude::*;
-use gtk::{ApplicationWindow, Builder, Button, Entry, FileChooserButton, ComboBoxText, Revealer, Label, main_quit};
+use gtk::{ApplicationWindow, Builder, Button, Entry, FileChooserButton,
+	ComboBoxText, Revealer, Label, main_quit};
 
 use crate::dialogo_cadastra_perfis::Cadastra;
 use crate::frontend_data_check::Dados;
@@ -35,20 +36,21 @@ impl MainWindow {
 	pub fn new() -> MainWindow {
 		let glade_src = include_str!("main_window.glade");
 		let glade = gtk::Builder::from_string(glade_src);
-		let window: gtk::ApplicationWindow = glade.get_object("window").expect("Não foi possivel encontrar o widget");
-		let ent_latitude: Entry = glade.get_object("ent_latitude").expect("Não foi possivel encontrar o widget");
-		let ent_longitude: Entry = glade.get_object("ent_longitude").expect("Não foi possivel encontrar o widget");
-		let ent_saida: Entry = glade.get_object("ent_saida").expect("Não foi possivel encontrar o widget");
-		let bt_fechar: Button = glade.get_object("bt_fechar").expect("Não foi possivel encontrar o widget");
-		let bt_run: Button = glade.get_object("bt_run").expect("Não foi possivel encontrar o widget");
-		let bt_entrada: FileChooserButton = glade.get_object("bt_entrada").expect("Não foi possivel encontrar o widget");
-		let bt_saida: FileChooserButton = glade.get_object("bt_saida").expect("Não foi possivel encontrar o widget");
-		let bt_fecha_notifica: Button = glade.get_object("bt_fecha_notifica").expect("Não foi possivel encontrar o widget");
-		let rv_notifica: Revealer = glade.get_object("rv_notifica").expect("Não foi possivel encontrar o widget");
-		let lb_notifica: Label = glade.get_object("label2").expect("Não foi possivel encontrar o widget");
-		let cb_perfis: ComboBoxText = glade.get_object("cb_perfis").expect("Não foi possivel encontrar o widget");
-		let bt_ad: Button = glade.get_object("bt_ad").expect("Não foi possivel encontrar o widget");
-		let bt_rm: Button = glade.get_object("bt_rm").expect("Não foi possivel encontrar o widget");
+
+		get_widget!(glade, ApplicationWindow, window);
+		get_widget!(glade, Entry, ent_latitude);
+		get_widget!(glade, Entry, ent_longitude);
+		get_widget!(glade, Entry, ent_saida);
+		get_widget!(glade, Button, bt_fechar);
+		get_widget!(glade, Button, bt_run);
+		get_widget!(glade, FileChooserButton, bt_entrada);
+		get_widget!(glade, FileChooserButton, bt_saida);
+		get_widget!(glade, Button, bt_fecha_notifica);
+		get_widget!(glade, Revealer, rv_notifica);
+		get_widget!(glade, Label, lb_notifica);
+		get_widget!(glade, ComboBoxText, cb_perfis);
+		get_widget!(glade, Button, bt_ad);
+		get_widget!(glade, Button, bt_rm);
 
 		MainWindow {
 			glade,

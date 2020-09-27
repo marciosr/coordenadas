@@ -276,7 +276,7 @@ A codificação deverá ser UTF-8.</property>
                             <property name="can_focus">False</property>
                             <property name="spacing">20</property>
                             <child>
-                              <object class="GtkLabel" id="label2">
+                              <object class="GtkLabel" id="lb_notifica">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">Todos os campos devem ser preenchidos.</property>

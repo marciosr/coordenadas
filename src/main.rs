@@ -1,8 +1,11 @@
 #![windows_subsystem = "windows"]
+#[macro_use]
+mod utils;
 mod main_window;
 mod dialogo_cadastra_perfis;
 mod frontend_data_check;
 mod backend;
+
 
 use crate::main_window::MainWindow;
 
