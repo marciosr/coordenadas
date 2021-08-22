@@ -1,18 +1,24 @@
 extern crate gtk;
-extern crate gio;
+// extern crate gio;
 
 use std::fs;
 use std::rc::Rc;
 use std::cell::{RefCell, RefMut};
 use std::collections::BTreeMap;
-
+use std::path::PathBuf;
 use gtk::prelude::*;
-use gtk::{ApplicationWindow, Builder, Button, Entry, FileChooserButton,
-	ComboBoxText, Revealer, Label, main_quit};
+use gtk::{ApplicationWindow, Builder, Button, Entry, Text,
+	ComboBoxText, Revealer, Label, FileChooserDialog, ResponseType};
+use gtk::{gio, glib};
+//use std::fs::File;
+use std::io::BufReader;
+use glib::clone;
+use gio::File;
 
 use crate::dialogo_cadastra_perfis::Cadastra;
 use crate::frontend_data_check::Dados;
 use crate::backend::*;
+
 
 pub struct MainWindow {
 	pub glade:							Builder,
@@ -22,8 +28,8 @@ pub struct MainWindow {
 	pub ent_saida:					Entry,
 	pub bt_fechar:					Button,
 	pub bt_run:							Button,
-	pub bt_entrada:					FileChooserButton,
-	pub bt_saida:						FileChooserButton,
+	pub bt_entrada:					Button,
+	pub bt_saida:						Button,
 	pub bt_fecha_notifica:	Button,
 	pub rv_notifica:				Revealer,
 	pub lb_notifica:				Label,
@@ -43,14 +49,21 @@ impl MainWindow {
 		get_widget!(glade, Entry, ent_saida);
 		get_widget!(glade, Button, bt_fechar);
 		get_widget!(glade, Button, bt_run);
-		get_widget!(glade, FileChooserButton, bt_entrada);
-		get_widget!(glade, FileChooserButton, bt_saida);
+		get_widget!(glade, Button, bt_entrada);
+		get_widget!(glade, Button, bt_saida);
 		get_widget!(glade, Button, bt_fecha_notifica);
 		get_widget!(glade, Revealer, rv_notifica);
 		get_widget!(glade, Label, lb_notifica);
 		get_widget!(glade, ComboBoxText, cb_perfis);
 		get_widget!(glade, Button, bt_ad);
 		get_widget!(glade, Button, bt_rm);
+
+let _teste = gtk::Entry::new();
+
+		ent_latitude.set_sensitive(true);
+
+
+
 
 		MainWindow {
 			glade,
@@ -91,7 +104,7 @@ impl MainWindow {
 		self.cb_perfis.set_id_column(1); // Garante que haja um perfil ativo, assim não havera o crash de unwrap() on None.
 		self.cb_perfis.set_active(Some(0));
 
-		let perfis = match self.cb_perfis.get_active_text() {
+		let perfis = match self.cb_perfis.active_text() {
 			Some(_ativo) => perfis,
 			None =>	{
 				let perfis_populados: Rc<RefCell<_>> = Rc::new(RefCell::new(popula_perfis()));
@@ -102,13 +115,94 @@ impl MainWindow {
 
 		self.cb_perfis.set_active(Some(0));
 
-		let nome_perfil = self.cb_perfis.get_active_text().unwrap(); // Possível problema de unwrap sobre None
+		let nome_perfil = self.cb_perfis.active_text().unwrap(); // Possível problema de unwrap sobre None
 		atualiza_campos(nome_perfil.to_string(), &self.ent_latitude, &self.ent_longitude, &perfis);
+
+		let window = self.window.clone();
+		let uri_entrada: Rc<RefCell<PathBuf>> = Rc::new(RefCell::new(PathBuf::new()));
+		let uri_saida: Rc<RefCell<PathBuf>> = Rc::new(RefCell::new(PathBuf::new()));
+
+		{
+			let uri_clone = uri_entrada.clone();
+
+			self.bt_entrada.connect_clicked(move|_|{
+				println!("Teste do callback antes de criar filechooser");
+
+				let file_chooser = FileChooserDialog::new(
+					Some("Open File"),
+					Some(&window),
+					gtk::FileChooserAction::Open,
+					&[("Open", gtk::ResponseType::Ok), ("Cancel", gtk::ResponseType::Cancel)],
+				);
+
+				let uri_clone2 = uri_clone.clone();
+
+				file_chooser.connect_response(move |d: &FileChooserDialog, response: ResponseType| {
+				let caminho = match response {
+					gtk::ResponseType::Ok => {
+						let file = d.file().expect("Couldn't get file");
+						print!("Conteúdo de file {:?}", d.file());
+						let full_path = file.path().expect("Couldn't get file path");
+						let file = std::fs::File::open (&full_path.as_path()).expect("Couldn't open file");
+						Some(full_path)
+					},
+						_ => None,
+					};
+					d.close();
+
+					*uri_clone2.borrow_mut() = caminho.unwrap_or(PathBuf::new());
+					println!("TESTE 1 {:?}", &uri_clone2);
+				});
+				file_chooser.show();
+			});
+		}
+
+
+		{
+			let uri_clone = uri_saida.clone();
+			let window = self.window.clone();
+
+			self.bt_saida.connect_clicked(move|_|{
+				println!("Teste do callback antes de criar filechooser");
+
+				let file_chooser = FileChooserDialog::new(
+					Some("Escolha o diretório para salvar"),
+					Some(&window),
+					gtk::FileChooserAction::SelectFolder,
+					&[("Open", gtk::ResponseType::Ok), ("Cancel", gtk::ResponseType::Cancel)],
+				);
+
+				let uri_clone2 = uri_clone.clone();
+
+				file_chooser.connect_response(move |d: &FileChooserDialog, response: ResponseType| {
+				let caminho = match response {
+					gtk::ResponseType::Ok => {
+						let file = d.file().expect("Couldn't get file");
+						print!("Conteúdo de file {:?}", d.file());
+						let full_path = file.path().expect("Couldn't get file path");
+						let file = std::fs::File::open (&full_path.as_path()).expect("Couldn't open file");
+						Some(full_path)
+					},
+						_ => None,
+					};
+					d.close();
+
+					*uri_clone2.borrow_mut() = caminho.unwrap_or(PathBuf::new());
+					println!("TESTE 1.1 {:?}", &uri_clone2);
+				});
+				file_chooser.show();
+			});
+		}
+
+		// let uri_entrada: Rc<RefCell<PathBuf>> = Rc::new(RefCell::new(PathBuf::new()));
+		// let uri_saida: Rc<RefCell<PathBuf>> = Rc::new(RefCell::new(PathBuf::new()));
+		// let mut uri_saida_conf: PathBuf;
+
 
 		{ // Bloco de execussão da busca
 
-			let bt_entrada_clone = self.bt_entrada.clone();
-			let bt_saida_clone = self.bt_saida.clone();
+			// let bt_entrada_clone = self.bt_entrada.clone();
+			// let bt_saida_clone = self.bt_saida.clone();
 			let ent_latitude_clone = self.ent_latitude.clone();
 			let ent_longitude_clone = self.ent_longitude.clone();
 			let ent_saida_clone = self.ent_saida.clone();
@@ -116,17 +210,27 @@ impl MainWindow {
 
 			let lb_notifica_clone = self.lb_notifica.clone();
 
+			let uri_entrada_clone = uri_entrada.clone();
+			let uri_saida_clone = uri_saida.clone();
+
+			let uri_entrada_clone2 = uri_entrada.clone();
+			let uri_saida_clone2 = uri_saida.clone();
+
+
+
 			self.bt_run.connect_clicked(move |_| {
 
-				if Dados::check(&bt_entrada_clone, &bt_saida_clone, &ent_latitude_clone, &ent_longitude_clone, &ent_saida_clone, &rv_notifica_clone, &lb_notifica_clone) {
+				//println!("\n\n** TESTE 2 {:?}", &uri_clone);
 
-				 	let dados = Dados::new(&bt_entrada_clone, &bt_saida_clone, &ent_latitude_clone, &ent_longitude_clone, &ent_saida_clone);
-				 	let texto = fs::read_to_string(&dados.uri_entrada);
+				if Dados::check(&*uri_entrada_clone.borrow(), &*uri_saida_clone.borrow(), &ent_latitude_clone, &ent_longitude_clone, &ent_saida_clone, &rv_notifica_clone, &lb_notifica_clone) {
+
+				 	let dados = Dados::new(&uri_entrada_clone2, &uri_saida_clone2, &ent_latitude_clone, &ent_longitude_clone, &ent_saida_clone);
+				 	let texto = fs::read_to_string(&*dados.uri_entrada.borrow());
 
 				 	match texto {
 				 		Ok(_)	=> {
-						 	analisa_texto (	dados.uri_entrada,
-						 					dados.uri_saida,
+						 	analisa_texto (	&*dados.uri_entrada.borrow(),
+						 					&dados.uri_saida,
 						 					dados.latitude,
 						 					dados.longitude).expect("Não foi possível carregar o arquivo de texto");
 				 		},
@@ -154,9 +258,9 @@ impl MainWindow {
 			let perfis_clone = perfis.clone();
 
 			combo.connect_changed(move |cb| {
-				match cb.get_active_text() {
+				match cb.active_text() {
 					Some(_texto) => {
-						let nome_perfil = cb.get_active_text().unwrap();
+						let nome_perfil = cb.active_text().unwrap();
 						atualiza_campos(nome_perfil.to_string(), &ent_1, &ent_2, &perfis_clone);
 					},
 					None => println!("Não há texto ativo"),
@@ -182,19 +286,19 @@ impl MainWindow {
 				let perfis_clone1 = perfis_clone0.clone();
 				cadastra.bt_preencher.connect_clicked(move|_|{
 
-					if	&cadastra_clone.ent_dialog_latitude.get_text().to_string() == "" ||
-						&cadastra_clone.ent_dialog_longitude.get_text().to_string() == "" ||
-						&cadastra_clone.ent_dialog_perfil.get_text().to_string() == "" {
+					if	&cadastra_clone.ent_dialog_latitude.text().to_string() == "" ||
+						&cadastra_clone.ent_dialog_longitude.text().to_string() == "" ||
+						&cadastra_clone.ent_dialog_perfil.text().to_string() == "" {
 						} else {
 
 							let nome_perfil =  &cadastra_clone.ent_dialog_perfil
-																.get_text().to_string();
+																.text().to_string();
 
 							adiciona_perfil (	nome_perfil.to_string(),
 												&cadastra_clone.ent_dialog_latitude
-																.get_text().to_string(),
+																.text().to_string(),
 												&cadastra_clone.ent_dialog_longitude
-																.get_text().to_string(),
+																.text().to_string(),
 												&perfis_clone1
 											);
 							cb_perfis_clone2.append_text(nome_perfil);
@@ -204,9 +308,9 @@ impl MainWindow {
 								o conteúdo dos perfiles no closure é: {:?}",
 								nome_perfil,
 								&cadastra_clone.ent_dialog_latitude
-																.get_text().to_string(),
+																.text().to_string(),
 								&cadastra_clone.ent_dialog_longitude
-																.get_text().to_string(),
+																.text().to_string(),
 								&perfis_clone1
 							);
 
@@ -221,28 +325,27 @@ impl MainWindow {
 
 		{
 			let perfis_clone = perfis.clone();
-			self.window.connect_delete_event(move |_,_| {
+			self.window.connect_close_request(move |_| {
 				let map = perfis_clone.borrow();
 				match salva_perfis(serializa_yaml(&map)) {
 					Ok(a) => a,
 					Err(e) => println!("Erro ao salvar os perfis: {}", e),
 				};
-				main_quit();
-				Inhibit(false) // Não funciona no gtk4
+				glib::signal::Inhibit(false) // Não funciona no gtk4
 			});
 		}
 
 		{
 			let perfis_clone = perfis.clone();
-
+			let win = self.window.clone();
 			self.bt_fechar.connect_clicked(move |_| {
 				let map = perfis_clone.borrow();
 				match salva_perfis(serializa_yaml(&map)) {
 					Ok(a) => a,
 					Err(e) => println!("Erro ao salvar os perfis: {}", e),
 				};
-				main_quit();
-				Inhibit(false); // Não funciona no gtk4
+				win.destroy();
+				glib::signal::Inhibit(false); // Não funciona no gtk4
 			});
 		}
 
@@ -252,7 +355,7 @@ impl MainWindow {
 
 			self.bt_rm.connect_clicked(move|_| {
 				//remove_perfil(&combo, &perfis_clone);
-				match combo.get_active_text() {
+				match combo.active_text() {
 					Some(perfil_ativo) => {
 						remove_perfil (perfil_ativo.to_string(), &perfis_clone);
 						atualiza_combo (&combo, &perfis_clone);
@@ -262,7 +365,7 @@ impl MainWindow {
 
 			});
 		}
-	self.window.show_all();
+	self.window.show();
 
 	}
 }
@@ -284,7 +387,7 @@ pub fn atualiza_campos(	nome_perfil: String,
 }
 
 pub fn atualiza_combo (	combo: &ComboBoxText,
-						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
+												perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
 	combo.remove_all();
 
 	let map = perfis.borrow();
@@ -295,9 +398,9 @@ pub fn atualiza_combo (	combo: &ComboBoxText,
 }
 
 pub fn set_entrys (	entry_latitude: &Entry,
-					entry_longitude: &Entry,
-					nome_perfil: &String,
-					perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
+										entry_longitude: &Entry,
+										nome_perfil: &String,
+										perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
 	let map = perfis.borrow();
 
 	let expressoes = map.get(nome_perfil).unwrap();
@@ -316,3 +419,4 @@ pub fn adiciona_perfil (perfil_n: String,
 	//println!("O conteúdo dos perfils dentro da função adiciona perfi é: {:?}", map); // Para testes!
 	map.insert(perfil_n, expressoes);
 }
+

@@ -11,13 +11,15 @@ use regex::Regex;
 use csv::*;
 use serde::{Serialize, Deserialize};
 
-pub fn analisa_texto (  uri_entrada: 	PathBuf,
-                        uri_saida: 		PathBuf,
+pub fn analisa_texto (  uri_entrada: 	&PathBuf,
+                        uri_saida: 		&PathBuf,
                         expressao_n:	String,
                         expressao_e:	String ) -> Result<()> {
 
 	let texto = fs::read_to_string(uri_entrada)?;
 	let text = &String::from(texto);
+
+	println!("Conteúdo do texto {}", &text); // O texto memorial está sendo lido
 
 	const VEC_SIZE: usize = 13;
 	let mut vetor1 = Vec::with_capacity(VEC_SIZE);
@@ -49,7 +51,7 @@ pub fn analisa_texto (  uri_entrada: 	PathBuf,
   	vetor4.push(x.replace(".",""));
   }
 
-  gera_csv (vetor3, vetor4, uri_saida)
+  gera_csv (vetor3, vetor4, uri_saida.to_path_buf())
   	.expect("Não foi possível utilizar a uri informada pela função Dados::new()");
 
   Ok(())
