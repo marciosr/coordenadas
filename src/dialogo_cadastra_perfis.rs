@@ -16,7 +16,7 @@ pub struct Cadastra {
 
 impl Cadastra {
 	pub fn new() -> Rc<Self> {
-		let glade_src = include_str!("dialogo_cadastra_perfis.glade");
+		let glade_src = include_str!("dialogo_cadastra_perfis.ui");
 		let glade = gtk::Builder::from_string(glade_src);
 		let dialog: gtk::Window = glade.object("dialog").expect("Não foi possivel encontrar o widget");
 

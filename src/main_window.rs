@@ -7,7 +7,7 @@ use std::cell::{RefCell, RefMut};
 use std::collections::BTreeMap;
 use std::path::PathBuf;
 use gtk::prelude::*;
-use gtk::{ApplicationWindow, Builder, Button, Entry, Text,
+use gtk::{ApplicationWindow, Builder, Button, Entry,
 	ComboBoxText, Revealer, Label, FileChooserDialog, ResponseType};
 use gtk::{gio, glib};
 //use std::fs::File;
@@ -40,7 +40,7 @@ pub struct MainWindow {
 
 impl MainWindow {
 	pub fn new() -> MainWindow {
-		let glade_src = include_str!("main_window.glade");
+		let glade_src = include_str!("main_window.ui");
 		let glade = gtk::Builder::from_string(glade_src);
 
 		get_widget!(glade, ApplicationWindow, window);
@@ -58,12 +58,9 @@ impl MainWindow {
 		get_widget!(glade, Button, bt_ad);
 		get_widget!(glade, Button, bt_rm);
 
-let _teste = gtk::Entry::new();
+		let _teste = gtk::Entry::new();
 
 		ent_latitude.set_sensitive(true);
-
-
-
 
 		MainWindow {
 			glade,
