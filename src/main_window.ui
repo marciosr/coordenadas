@@ -49,7 +49,7 @@
                     </child>
                     <child>
                       <object class="GtkLabel">
-                        <property name="can_focus">0</property>
+                        <property name="can_focus">1</property>
                         <property name="label" translatable="yes">Expressão para longitude:</property>
                         <layout>
                           <property name="column">0</property>
@@ -70,7 +70,7 @@
                     </child>
                     <child>
                       <object class="GtkComboBoxText" id="cb_perfis">
-                        <property name="can_focus">0</property>
+                        <property name="can_focus">1</property>
                         <property name="active">0</property>
                         <layout>
                           <property name="column">1</property>
@@ -81,7 +81,7 @@
                     </child>
                     <child>
                       <object class="GtkLabel">
-                        <property name="can_focus">0</property>
+                        <property name="can_focus">1</property>
                         <property name="label" translatable="yes">Tipo de coordenadas</property>
                         <layout>
                           <property name="column">0</property>
@@ -92,7 +92,7 @@
                     </child>
                     <child>
                       <object class="GtkLabel">
-                        <property name="can_focus">0</property>
+                        <property name="can_focus">1</property>
                         <property name="label" translatable="yes">Arquivo de entrada: </property>
                         <layout>
                           <property name="column">0</property>
@@ -102,7 +102,7 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="bt_entrada">
-                        <property name="label">gtk-open</property>
+                        <property name="label">Carregar texto</property>
                         <property name="tooltip_text" translatable="yes">Selecione um arquivo de texto para ser analisado.
 A codificação deverá ser UTF-8.</property>
                         <layout>
@@ -114,7 +114,7 @@ A codificação deverá ser UTF-8.</property>
                     </child>
                     <child>
                       <object class="GtkLabel">
-                        <property name="can_focus">0</property>
+                        <property name="can_focus">1</property>
                         <property name="label" translatable="yes">Diretório onde salvar (csv):</property>
                         <layout>
                           <property name="column">0</property>
@@ -124,7 +124,7 @@ A codificação deverá ser UTF-8.</property>
                     </child>
                     <child>
                       <object class="GtkButton" id="bt_saida">
-                        <property name="label">gtk-save</property>
+                        <property name="label">Salve em</property>
                         <property name="tooltip_text" translatable="yes">Escolha o diretório para salvar o resultado da análise.</property>
                         <layout>
                           <property name="column">1</property>
@@ -135,7 +135,7 @@ A codificação deverá ser UTF-8.</property>
                     </child>
                     <child>
                       <object class="GtkLabel">
-                        <property name="can_focus">0</property>
+                        <property name="can_focus">1</property>
                         <property name="label" translatable="yes">Nome do arquivo de saída (.csv)</property>
                         <layout>
                           <property name="column">0</property>
@@ -156,7 +156,7 @@ A codificação deverá ser UTF-8.</property>
                     </child>
                     <child>
                       <object class="GtkButton" id="bt_ad">
-                        <property name="label">gtk-add</property>
+                        <property name="label">Novo perfil</property>
                         <property name="receives_default">1</property>
                         <property name="tooltip_text" translatable="yes">Adiciona perfil de expressões regulares.</property>
                         <layout>
@@ -167,7 +167,7 @@ A codificação deverá ser UTF-8.</property>
                     </child>
                     <child>
                       <object class="GtkButton" id="bt_rm">
-                        <property name="label">gtk-remove</property>
+                        <property name="label">Remove perfil</property>
                         <property name="receives_default">1</property>
                         <property name="tooltip_text" translatable="yes">Remove perfil de expressões regulares selecionado.</property>
                         <layout>
@@ -180,7 +180,7 @@ A codificação deverá ser UTF-8.</property>
                 </child>
                 <child>
                   <object class="GtkGrid">
-                    <property name="can_focus">0</property>
+                    <property name="can_focus">1</property>
                     <property name="row_homogeneous">1</property>
                     <property name="column_homogeneous">1</property>
                     <child>
@@ -211,23 +211,23 @@ A codificação deverá ser UTF-8.</property>
             </property>
             <child type="overlay">
               <object class="GtkOverlay" id="overlay2">
-                <property name="can_focus">0</property>
+                <property name="can_focus">1</property>
                 <property name="valign">start</property>
                 <property name="child">
                   <object class="GtkRevealer" id="rv_notifica">
-                    <property name="can-target">0</property>
-                    <property name="can_focus">0</property>
+                    <property name="can-target">1</property>
+                    <property name="can_focus">1</property>
                     <property name="halign">center</property>
                     <property name="child">
                       <object class="GtkFrame" id="frame2">
-                        <property name="can_focus">0</property>
+                        <property name="can_focus">1</property>
                         <property name="child">
                           <object class="GtkBox" id="box2">
-                            <property name="can_focus">0</property>
+                            <property name="can_focus">1</property>
                             <property name="spacing">20</property>
                             <child>
                               <object class="GtkLabel" id="lb_notifica">
-                                <property name="can_focus">0</property>
+                                <property name="can_focus">1</property>
                                 <property name="label" translatable="yes">Todos os campos devem ser preenchidos.</property>
                               </object>
                             </child>
@@ -236,7 +236,7 @@ A codificação deverá ser UTF-8.</property>
                                 <property name="receives_default">1</property>
                                 <child>
                                   <object class="GtkImage" id="image2">
-                                    <property name="can_focus">0</property>
+                                    <property name="can_focus">1</property>
                                     <property name="icon_name">window-close-symbolic</property>
                                   </object>
                                 </child>
