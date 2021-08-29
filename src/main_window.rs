@@ -1,5 +1,4 @@
 extern crate gtk;
-// extern crate gio;
 
 use std::fs;
 use std::rc::Rc;
@@ -9,11 +8,7 @@ use std::path::PathBuf;
 use gtk::prelude::*;
 use gtk::{ApplicationWindow, Builder, Button, Entry,
 	ComboBoxText, Revealer, Label, FileChooserDialog, ResponseType};
-use gtk::{gio, glib};
-//use std::fs::File;
-use std::io::BufReader;
-use glib::clone;
-use gio::File;
+use gtk::glib;
 
 use crate::dialogo_cadastra_perfis::Cadastra;
 use crate::frontend_data_check::Dados;
@@ -140,7 +135,7 @@ impl MainWindow {
 						let file = d.file().expect("Couldn't get file");
 						print!("Conteúdo de file {:?}", d.file());
 						let full_path = file.path().expect("Couldn't get file path");
-						let file = std::fs::File::open (&full_path.as_path()).expect("Couldn't open file");
+						// let file = std::fs::File::open (&full_path.as_path()).expect("Couldn't open file");
 						Some(full_path)
 					},
 						_ => None,
@@ -177,7 +172,7 @@ impl MainWindow {
 						let file = d.file().expect("Couldn't get file");
 						print!("Conteúdo de file {:?}", d.file());
 						let full_path = file.path().expect("Couldn't get file path");
-						let file = std::fs::File::open (&full_path.as_path()).expect("Couldn't open file");
+						// let file = std::fs::File::open (&full_path.as_path()).expect("Couldn't open file");
 						Some(full_path)
 					},
 						_ => None,

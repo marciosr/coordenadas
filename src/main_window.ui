@@ -263,13 +263,28 @@ A codificação deverá ser UTF-8.</property>
         </child>
       </object>
     </child>
+    <!-- <child type="titlebar"> -->
+    <!--   <object class="GtkHeaderBar"> -->
+    <!--     <property name="can_focus">0</property> -->
+    <!--     <property name="valign">start</property> -->
+    <!--     <child> -->
+    <!--       <placeholder/> -->
+    <!--     </child> -->
+    <!--   </object> -->
+    <!-- </child> -->
+
     <child type="titlebar">
       <object class="GtkHeaderBar">
-        <property name="can_focus">0</property>
-        <property name="valign">start</property>
-        <child>
-          <placeholder/>
-        </child>
+        <property name="title-widget">
+          <object class="GtkLabel">
+            <property name="label">Coordenadas</property>
+            <property name="single-line-mode">True</property>
+            <property name="ellipsize">begin</property>
+            <style>
+              <class name="title"/>
+            </style>
+          </object>
+        </property>
       </object>
     </child>
   </object>

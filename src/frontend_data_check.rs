@@ -1,12 +1,11 @@
 extern crate gtk;
 
 use std::rc::Rc;
-use std::cell::{RefCell, RefMut};
+use std::cell::RefCell;
 use gtk::*;
-use gtk::{FileChooser, Entry, EntryBuffer};
+use gtk::Entry;
 use std::path::PathBuf;
-use gtk::prelude::{EntryExt, EntryBufferExt};
-use gtk::gio::File;
+use gtk::prelude::EntryExt;
 use gtk::prelude::*;
 
 
@@ -20,14 +19,13 @@ pub struct Dados<'a> {
 
 impl <'a> Dados <'a> {
 		pub fn new (uri_entrada:		&'a Rc<RefCell<PathBuf>>,
-								uri_saidaa:						&Rc<RefCell<PathBuf>>,
+								uri_saidaa:			&Rc<RefCell<PathBuf>>,
 								ent_exp1:				&Entry,
 								ent_exp2:				&Entry,
 								ent_nome:				&Entry)-> Dados<'a> {
 
 		println!("URI da entrada {:?}\n", uri_entrada);
-		// let buffer = ent_exp1.buffer();
-		// let latitude = buffer.to_string();
+
 		let latitude: String = ent_exp1.text().to_string();
 		let longitude: String = ent_exp2.text().to_string();
 		let nome_csv: String = ent_nome.text().to_string();

@@ -12,10 +12,7 @@ use gtk::Application;
 use gtk::prelude::*;
 
 fn main() {
-	// if gtk::init().is_err() {
- //    	println!("A inicialização do gtk falhou.");
- //    	return;
-	// }
+
 	let application = Application::new(Some("com.github.marciosr.coordenadas"),
 		Default::default());
 
