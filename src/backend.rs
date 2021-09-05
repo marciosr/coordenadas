@@ -52,14 +52,14 @@ pub fn analisa_texto (  uri_entrada: 	&PathBuf,
   }
 
   gera_csv (vetor3, vetor4, uri_saida.to_path_buf())
-  	.expect("Não foi possível utilizar a uri informada pela função Dados::new()");
+  					.expect("Não foi possível utilizar a uri informada pela função Dados::new()");
 
   Ok(())
 }
 
-pub fn gera_csv (   vec: Vec<String>,
-                    vec1: Vec<String>,
-                    uri2: PathBuf ) -> Result<()> {
+pub fn gera_csv ( vec: Vec<String>,
+                  vec1: Vec<String>,
+                  uri2: PathBuf ) -> Result<()> {
 
 	let mut wtr = Writer::from_path(uri2)?;
 	wtr.write_record(&["Latitude","Longitude"])?;
@@ -114,9 +114,15 @@ pub fn desserializa_yaml (serializado: String) -> BTreeMap<String, Expressoes> {
 }
 
 pub fn popula_perfis () -> BTreeMap<String, Expressoes> {
-	let utm = Expressoes { latitude: String::from(r"\d.\d{3}.\d{3},\d{1,3}"), longitude: String::from(r" \d{3}.\d{3},\d{1,3}")};
-	let decimal = Expressoes { latitude: String::from(r"[+-]?[3-4]\d\.\d{6}"), longitude: String::from(r"[+-]?[0-2]\d\.\d{6}")};
-	let gms = Expressoes { latitude: String::from(r"[0-2]\dS\s[0-5]\d'\s[0-5]\d"), longitude: String::from(r"[3-7]\dW\s[0-5]\d'\s[0-5]\d")};
+
+	let utm = Expressoes { latitude: String::from(r"\d.\d{3}.\d{3},\d{1,3}"),
+												 longitude: String::from(r" \d{3}.\d{3},\d{1,3}")};
+
+	let decimal = Expressoes { latitude: String::from(r"[+-]?[3-4]\d\.\d{6}"),
+														 longitude: String::from(r"[+-]?[0-2]\d\.\d{6}")};
+
+	let gms = Expressoes { latitude: String::from(r"[0-2]\dS\s[0-5]\d'\s[0-5]\d"),
+														 longitude: String::from(r"[3-7]\dW\s[0-5]\d'\s[0-5]\d")};
 
 	let mut perfis = BTreeMap::new();
 

@@ -6,21 +6,21 @@ use std::cell::{RefCell, RefMut};
 use std::collections::BTreeMap;
 use std::path::PathBuf;
 use gtk::prelude::*;
-use gtk::{ApplicationWindow, Builder, Button, Entry,
-	ComboBoxText, Revealer, Label, FileChooserDialog, ResponseType};
+use gtk::{	ApplicationWindow, Builder, Button, Entry,
+						ComboBoxText, Revealer, Label, FileChooserDialog,
+						ResponseType};
 use gtk::glib;
 
 use crate::dialogo_cadastra_perfis::Cadastra;
 use crate::frontend_data_check::Dados;
 use crate::backend::*;
 
-
 pub struct MainWindow {
-	pub glade:							Builder,
+	pub ui:							Builder,
 	pub window:							ApplicationWindow,
 	pub ent_latitude:				Entry,
 	pub ent_longitude:			Entry,
-	pub ent_planilha:					Entry,
+	pub ent_planilha:				Entry,
 	pub bt_fechar:					Button,
 	pub bt_run:							Button,
 	pub bt_entrada:					Button,
@@ -35,30 +35,26 @@ pub struct MainWindow {
 
 impl MainWindow {
 	pub fn new() -> MainWindow {
-		let glade_src = include_str!("main_window.ui");
-		let glade = gtk::Builder::from_string(glade_src);
+		let ui_src = include_str!("main_window.ui");
+		let ui = gtk::Builder::from_string(ui_src);
 
-		get_widget!(glade, ApplicationWindow, window);
-		get_widget!(glade, Entry, ent_latitude);
-		get_widget!(glade, Entry, ent_longitude);
-		get_widget!(glade, Entry, ent_planilha);
-		get_widget!(glade, Button, bt_fechar);
-		get_widget!(glade, Button, bt_run);
-		get_widget!(glade, Button, bt_entrada);
-		get_widget!(glade, Button, bt_saida);
-		get_widget!(glade, Button, bt_fecha_notifica);
-		get_widget!(glade, Revealer, rv_notifica);
-		get_widget!(glade, Label, lb_notifica);
-		get_widget!(glade, ComboBoxText, cb_perfis);
-		get_widget!(glade, Button, bt_ad);
-		get_widget!(glade, Button, bt_rm);
-
-		let _teste = gtk::Entry::new();
-
-		ent_latitude.set_sensitive(true);
+		get_widget!(ui, ApplicationWindow,	window);
+		get_widget!(ui, Entry, 							ent_latitude);
+		get_widget!(ui, Entry,							ent_longitude);
+		get_widget!(ui, Entry,							ent_planilha);
+		get_widget!(ui, Button,							bt_fechar);
+		get_widget!(ui, Button,							bt_run);
+		get_widget!(ui, Button,							bt_entrada);
+		get_widget!(ui, Button,							bt_saida);
+		get_widget!(ui, Button,							bt_fecha_notifica);
+		get_widget!(ui, Revealer,						rv_notifica);
+		get_widget!(ui, Label,							lb_notifica);
+		get_widget!(ui, ComboBoxText,				cb_perfis);
+		get_widget!(ui, Button,							bt_ad);
+		get_widget!(ui, Button,							bt_rm);
 
 		MainWindow {
-			glade,
+			ui,
 			window,
 			ent_latitude,
 			ent_longitude,
@@ -135,7 +131,6 @@ impl MainWindow {
 						let file = d.file().expect("Couldn't get file");
 						print!("Conteúdo de file {:?}", d.file());
 						let full_path = file.path().expect("Couldn't get file path");
-						// let file = std::fs::File::open (&full_path.as_path()).expect("Couldn't open file");
 						Some(full_path)
 					},
 						_ => None,
@@ -189,49 +184,45 @@ impl MainWindow {
 			});
 		}
 
-		// let uri_entrada: Rc<RefCell<PathBuf>> = Rc::new(RefCell::new(PathBuf::new()));
-		// let uri_saida: Rc<RefCell<PathBuf>> = Rc::new(RefCell::new(PathBuf::new()));
-		// let mut uri_saida_conf: PathBuf;
-
-
 		{ // Bloco de execussão da busca
 
-			// let bt_entrada_clone = self.bt_entrada.clone();
-			// let bt_saida_clone = self.bt_saida.clone();
 			let ent_latitude_clone = self.ent_latitude.clone();
 			let ent_longitude_clone = self.ent_longitude.clone();
-			//let ent_saida_clone = self.ent_saida.clone();
 			let rv_notifica_clone = self.rv_notifica.clone();
-
 			let lb_notifica_clone = self.lb_notifica.clone();
-
 			let uri_entrada_clone = uri_entrada.clone();
 			let uri_saida_clone = uri_saida.clone();
-
 			let uri_entrada_clone2 = uri_entrada.clone();
 			let uri_saida_clone2 = uri_saida.clone();
 
-
-
 			self.bt_run.connect_clicked(move |_| {
 
-				//println!("\n\n** TESTE 2 {:?}", &uri_clone);
+				if Dados::check(&*uri_entrada_clone.borrow(),
+												&*uri_saida_clone.borrow(),
+												&ent_latitude_clone,
+												&ent_longitude_clone,
+												&rv_notifica_clone,
+												&lb_notifica_clone) {
 
-				if Dados::check(&*uri_entrada_clone.borrow(), &*uri_saida_clone.borrow(), &ent_latitude_clone, &ent_longitude_clone, &rv_notifica_clone, &lb_notifica_clone) {
+				 	let dados = Dados::new(&uri_entrada_clone2,
+				 												 &uri_saida_clone2,
+				 												 &ent_latitude_clone,
+				 												 &ent_longitude_clone);
 
-				 	let dados = Dados::new(&uri_entrada_clone2, &uri_saida_clone2, &ent_latitude_clone, &ent_longitude_clone);
 				 	let texto = fs::read_to_string(&*dados.uri_entrada.borrow());
 
 				 	match texto {
 				 		Ok(_)	=> {
 						 	analisa_texto (	&*dados.uri_entrada.borrow(),
-						 					&dados.uri_saida,
-						 					dados.latitude,
-						 					dados.longitude).expect("Não foi possível carregar o arquivo de texto");
+						 									&dados.uri_saida,
+						 									dados.latitude,
+						 									dados.longitude)
+						 									.expect("Não foi possível carregar o arquivo de texto");
 				 		},
 				 		Err(e)		=> {
 				 			println!("Erro no processamento do texto: {}", e);
-				 			lb_notifica_clone.set_label("A codificação do arquivo de entrada deve ser UTF-8!\nConverta-o em um editor de texto.");
+				 			lb_notifica_clone.set_label("A codificação do arquivo de entrada deve ser UTF-8!
+				 																	\nConverta-o em um editor de texto.");
 				 			rv_notifica_clone.set_reveal_child(true);
 				 		},
 				 	}
@@ -256,12 +247,13 @@ impl MainWindow {
 				match cb.active_text() {
 					Some(_texto) => {
 						let nome_perfil = cb.active_text().unwrap();
-						atualiza_campos(nome_perfil.to_string(), &ent_1, &ent_2, &perfis_clone);
+						atualiza_campos(nome_perfil.to_string(),
+														&ent_1,
+														&ent_2,
+														&perfis_clone);
 					},
 					None => println!("Não há texto ativo"),
-
 				}
-
 
 			});
 		}
@@ -282,8 +274,8 @@ impl MainWindow {
 				cadastra.bt_preencher.connect_clicked(move|_|{
 
 					if	&cadastra_clone.ent_dialog_latitude.text().to_string() == "" ||
-						&cadastra_clone.ent_dialog_longitude.text().to_string() == "" ||
-						&cadastra_clone.ent_dialog_perfil.text().to_string() == "" {
+							&cadastra_clone.ent_dialog_longitude.text().to_string() == "" ||
+							&cadastra_clone.ent_dialog_perfil.text().to_string() == "" {
 						} else {
 
 							let nome_perfil =  &cadastra_clone.ent_dialog_perfil
@@ -297,16 +289,17 @@ impl MainWindow {
 																&perfis_clone1);
 
 							cb_perfis_clone2.append_text(nome_perfil);
-							println!("Teste do botão fecha diálogo\nO nome do perfil dentro do closure do bt-fecha é: {}\n
-								A expressão da latitude é {}\n
-								A expressão da longitude é {}\n
-								o conteúdo dos perfiles no closure é: {:?}",
-								nome_perfil,
-								&cadastra_clone.ent_dialog_latitude
-																.text().to_string(),
-								&cadastra_clone.ent_dialog_longitude
-																.text().to_string(),
-								&perfis_clone1
+							println!(	"Teste do botão fecha diálogo
+												\nO nome do perfil dentro do closure do bt-fecha é: {}
+												\nA expressão da latitude é {}
+												\nA expressão da longitude é {}
+												\no conteúdo dos perfiles no closure é: {:?}",
+												nome_perfil,
+												&cadastra_clone.ent_dialog_latitude
+																			 .text().to_string(),
+												&cadastra_clone.ent_dialog_longitude
+															 				 .text().to_string(),
+												&perfis_clone1
 							);
 
 							cadastra_clone.dialog.close();
@@ -349,7 +342,6 @@ impl MainWindow {
 			let perfis_clone = perfis.clone();
 
 			self.bt_rm.connect_clicked(move|_| {
-				//remove_perfil(&combo, &perfis_clone);
 				match combo.active_text() {
 					Some(perfil_ativo) => {
 						remove_perfil (perfil_ativo.to_string(), &perfis_clone);
@@ -357,16 +349,14 @@ impl MainWindow {
 					},
 					None =>	{},
 				}
-
 			});
 		}
 	self.window.show();
-
 	}
 }
 
 pub fn inicia_combo (	combo: &ComboBoxText,
-						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>>) {
+											perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>>) {
 	let map = perfis.borrow();
 	for (key, _value) in map.iter() {
 		combo.append_text(&key);
@@ -374,11 +364,14 @@ pub fn inicia_combo (	combo: &ComboBoxText,
 }
 
 pub fn atualiza_campos(	nome_perfil: String,
-						ent_latitude: &Entry,
-						ent_longitude: &Entry,
-						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
+												ent_latitude: &Entry,
+												ent_longitude: &Entry,
+												perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
 
-	set_entrys(&ent_latitude, &ent_longitude, &String::from(nome_perfil), perfis);
+	set_entrys(&ent_latitude,
+						 &ent_longitude,
+						 &String::from(nome_perfil),
+						 perfis);
 }
 
 pub fn atualiza_combo (	combo: &ComboBoxText,
@@ -396,6 +389,7 @@ pub fn set_entrys (	entry_latitude: &Entry,
 										entry_longitude: &Entry,
 										nome_perfil: &String,
 										perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
+
 	let map = perfis.borrow();
 
 	let expressoes = map.get(nome_perfil).unwrap();
@@ -411,7 +405,6 @@ pub fn adiciona_perfil (perfil_n: String,
 	let expressoes = Expressoes { latitude: latitude_n.to_string(), longitude: longitude_n.to_string()};
 
 	let mut map: RefMut<_> = perfis.borrow_mut();
-	//println!("O conteúdo dos perfils dentro da função adiciona perfi é: {:?}", map); // Para testes!
 	map.insert(perfil_n, expressoes);
 }
 

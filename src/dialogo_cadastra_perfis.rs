@@ -1,14 +1,13 @@
 extern crate gtk;
 
 use gtk::prelude::*;
-use gtk::{Window, Entry, Button, HeaderBar, CenterBox};
+use gtk::{Window, Entry, Button, HeaderBar};
 
 use std::rc::Rc;
 
 pub struct Cadastra {
 	pub dialog:								Window,
 	pub header:								HeaderBar,
-	//pub centerbox:						CenterBox,
 	pub ent_dialog_perfil:		Entry,
 	pub ent_dialog_latitude:	Entry,
 	pub ent_dialog_longitude:	Entry,
@@ -18,17 +17,16 @@ pub struct Cadastra {
 
 impl Cadastra {
 	pub fn new() -> Rc<Self> {
-		let glade_src = include_str!("dialogo_cadastra_perfis.ui");
-		let glade = gtk::Builder::from_string(glade_src);
-		let dialog: gtk::Window = glade.object("dialog").expect("Não foi possivel encontrar o widget");
-		let header: gtk::HeaderBar = glade.object("header").expect("Não foi possivel encontrar o widget");
-		//let centerbox: gtk::CenterBox = glade.object("centerbox").expect("Não foi possivel encontrar o widget");
+		let ui_src = include_str!("dialogo_cadastra_perfis.ui");
+		let ui = gtk::Builder::from_string(ui_src);
 
-		let ent_dialog_perfil: Entry = glade.object("ent_dialog_perfil").expect("Não foi possivel encontrar o widget");
-		let ent_dialog_latitude: Entry = glade.object("ent_dialog_latitude").expect("Não foi possivel encontrar o widget");
-		let ent_dialog_longitude: Entry = glade.object("ent_dialog_longitude").expect("Não foi possivel encontrar o widget");
-		let bt_fecha_dialogo: Button = glade.object("bt_fecha_dialogo").expect("Não foi possivel encontrar o widget");
-		let bt_preencher: Button = glade.object("bt_preencher").expect("Não foi possivel encontrar o widget");
+		get_widget!(ui, Window,		dialog);
+		get_widget!(ui, HeaderBar,header);
+		get_widget!(ui, Entry, 		ent_dialog_perfil);
+		get_widget!(ui, Entry, 		ent_dialog_latitude);
+		get_widget!(ui, Entry, 		ent_dialog_longitude);
+		get_widget!(ui, Button, 	bt_fecha_dialogo);
+		get_widget!(ui, Button, 	bt_preencher);
 
 		{
 			let dialog_clone = dialog.clone();
@@ -40,7 +38,6 @@ impl Cadastra {
 		let cadastra = Rc::new(Self {
 			dialog,
 			header,
-			//centerbox,
 			ent_dialog_perfil,
 			ent_dialog_latitude,
 			ent_dialog_longitude,
