@@ -6,31 +6,47 @@
     <property name="resizable">0</property>
     <property name="modal">1</property>
     <child type="titlebar">
-      <object class="GtkHeaderBar">
+      <object class="GtkHeaderBar" id="header">
         <property name="visible">1</property>
         <property name="can_focus">1</property>
         <property name="hexpand">1</property>
         <property name="vexpand">1</property>
-        <child>
-          <object class="GtkButton" id="bt_fecha_dialogo">
-            <property name="visible">1</property>
-            <property name="label" translatable="yes">Cancela</property>
-            <property name="receives_default">1</property>
-            <property name="tooltip_text" translatable="yes">Cancela a operação e fecha o diálogo.</property>
-            <style>
-              <class name="destructive-action"/>
-            </style>
-          </object>
-        </child>
-        <child>
-          <object class="GtkButton" id="bt_preencher">
-            <property name="visible">1</property>
-            <property name="label" translatable="yes">Preencher</property>
-            <property name="receives_default">1</property>
-            <property name="tooltip_text" translatable="yes">Cria novo perfil com os dados informados.</property>
-            <style>
-              <class name="suggested-action"/>
-            </style>
+        <property name="show-title-buttons">False</property>
+        <child type="title">
+          <object class="GtkCenterBox">
+            <property name="hexpand">True</property>
+            <child type="start">
+              <object class="GtkButton" id="bt_preencher">
+                <property name="visible">1</property>
+                <property name="label" translatable="yes">Preencher</property>
+                <property name="receives_default">1</property>
+                <property name="tooltip_text" translatable="yes">Cria novo perfil com os dados informados.</property>
+                <style>
+                  <class name="suggested-action"/>
+                </style>
+              </object>
+            </child>
+            <child type="center">
+              <object class="GtkLabel" id="title">
+                <property name="ellipsize">end</property>
+                <property name="width-chars">3</property>
+								<property name="label">Adiciona perfil</property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                </attributes>
+              </object>
+            </child>
+            <child type="end">
+               <object class="GtkButton" id="bt_fecha_dialogo">
+                  <property name="visible">1</property>
+                  <property name="label" translatable="yes">Cancela</property>
+                  <property name="receives_default">1</property>
+                  <property name="tooltip_text" translatable="yes">Cancela a operação e fecha o diálogo.</property>
+                  <style>
+                    <class name="destructive-action"/>
+                  </style>
+                </object>
+            </child>
           </object>
         </child>
       </object>

@@ -1,12 +1,14 @@
 extern crate gtk;
 
 use gtk::prelude::*;
-use gtk::{Window, Entry, Button};
+use gtk::{Window, Entry, Button, HeaderBar, CenterBox};
 
 use std::rc::Rc;
 
 pub struct Cadastra {
 	pub dialog:								Window,
+	pub header:								HeaderBar,
+	//pub centerbox:						CenterBox,
 	pub ent_dialog_perfil:		Entry,
 	pub ent_dialog_latitude:	Entry,
 	pub ent_dialog_longitude:	Entry,
@@ -19,6 +21,8 @@ impl Cadastra {
 		let glade_src = include_str!("dialogo_cadastra_perfis.ui");
 		let glade = gtk::Builder::from_string(glade_src);
 		let dialog: gtk::Window = glade.object("dialog").expect("Não foi possivel encontrar o widget");
+		let header: gtk::HeaderBar = glade.object("header").expect("Não foi possivel encontrar o widget");
+		//let centerbox: gtk::CenterBox = glade.object("centerbox").expect("Não foi possivel encontrar o widget");
 
 		let ent_dialog_perfil: Entry = glade.object("ent_dialog_perfil").expect("Não foi possivel encontrar o widget");
 		let ent_dialog_latitude: Entry = glade.object("ent_dialog_latitude").expect("Não foi possivel encontrar o widget");
@@ -35,6 +39,8 @@ impl Cadastra {
 
 		let cadastra = Rc::new(Self {
 			dialog,
+			header,
+			//centerbox,
 			ent_dialog_perfil,
 			ent_dialog_latitude,
 			ent_dialog_longitude,

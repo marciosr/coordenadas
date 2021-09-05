@@ -280,6 +280,7 @@ A codificação deverá ser UTF-8.</property>
             <property name="label">Coordenadas</property>
             <property name="single-line-mode">True</property>
             <property name="ellipsize">begin</property>
+            <!-- <property name="has_subtitle">True</property> -->
             <style>
               <class name="title"/>
             </style>

@@ -287,12 +287,12 @@ impl MainWindow {
 																.text().to_string();
 
 							adiciona_perfil (	nome_perfil.to_string(),
-												&cadastra_clone.ent_dialog_latitude
+																&cadastra_clone.ent_dialog_latitude
 																.text().to_string(),
-												&cadastra_clone.ent_dialog_longitude
+																&cadastra_clone.ent_dialog_longitude
 																.text().to_string(),
-												&perfis_clone1
-											);
+																&perfis_clone1);
+
 							cb_perfis_clone2.append_text(nome_perfil);
 							println!("Teste do botão fecha diálogo\nO nome do perfil dentro do closure do bt-fecha é: {}\n
 								A expressão da latitude é {}\n
