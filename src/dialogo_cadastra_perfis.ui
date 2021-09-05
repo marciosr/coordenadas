@@ -15,12 +15,14 @@
         <child type="title">
           <object class="GtkCenterBox">
             <property name="hexpand">True</property>
+						<!-- <property name="homogeneus">True</property> -->
             <child type="start">
               <object class="GtkButton" id="bt_preencher">
                 <property name="visible">1</property>
                 <property name="label" translatable="yes">Preencher</property>
                 <property name="receives_default">1</property>
                 <property name="tooltip_text" translatable="yes">Cria novo perfil com os dados informados.</property>
+								<property name="hexpand">True</property>
                 <style>
                   <class name="suggested-action"/>
                 </style>
@@ -31,6 +33,7 @@
                 <property name="ellipsize">end</property>
                 <property name="width-chars">3</property>
 								<property name="label">Adiciona perfil</property>
+								<property name="hexpand">True</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -42,6 +45,7 @@
                   <property name="label" translatable="yes">Cancela</property>
                   <property name="receives_default">1</property>
                   <property name="tooltip_text" translatable="yes">Cancela a operação e fecha o diálogo.</property>
+								 	<property name="hexpand">True</property>
                   <style>
                     <class name="destructive-action"/>
                   </style>
@@ -74,11 +78,11 @@
             </object>
           </child>
           <child>
-            <object class="GtkEntry" id="ent_dialog_longitude">
+            <object class="GtkEntry" id="ent_dialog_perfil">
               <property name="visible">1</property>
               <layout>
                 <property name="column">1</property>
-                <property name="row">2</property>
+                <property name="row">0</property>
               </layout>
             </object>
           </child>
@@ -114,11 +118,11 @@
             </object>
           </child>
           <child>
-            <object class="GtkEntry" id="ent_dialog_perfil">
+            <object class="GtkEntry" id="ent_dialog_longitude">
               <property name="visible">1</property>
               <layout>
                 <property name="column">1</property>
-                <property name="row">0</property>
+                <property name="row">2</property>
               </layout>
             </object>
           </child>
