@@ -56,77 +56,77 @@
       </object>
     </child>
     <child>
-        <object class="GtkGrid">
-          <property name="visible">1</property>
-          <property name="can_focus">1</property>
-          <property name="margin-start">10</property>
-          <property name="margin-end">10</property>
-          <property name="margin_top">10</property>
-          <property name="margin_bottom">10</property>
-          <property name="row_spacing">2</property>
-          <property name="column_spacing">2</property>
-          <property name="column_homogeneous">1</property>
-          <child>
-            <object class="GtkLabel">
-              <property name="visible">1</property>
-              <property name="can_focus">1</property>
-              <property name="label" translatable="yes">Expressão para longitude</property>
-              <layout>
-                <property name="column">0</property>
-                <property name="row">2</property>
-              </layout>
-            </object>
-          </child>
-          <child>
-            <object class="GtkEntry" id="ent_dialog_perfil">
-              <property name="visible">1</property>
-              <layout>
-                <property name="column">1</property>
-                <property name="row">0</property>
-              </layout>
-            </object>
-          </child>
-          <child>
-            <object class="GtkLabel">
-              <property name="visible">1</property>
-              <property name="can_focus">1</property>
-              <property name="label" translatable="yes">Expressão para latitude</property>
-              <layout>
-                <property name="column">0</property>
-                <property name="row">1</property>
-              </layout>
-            </object>
-          </child>
-          <child>
-            <object class="GtkEntry" id="ent_dialog_latitude">
-              <property name="visible">1</property>
-              <layout>
-                <property name="column">1</property>
-                <property name="row">1</property>
-              </layout>
-            </object>
-          </child>
-          <child>
-            <object class="GtkLabel">
-              <property name="visible">1</property>
-              <property name="can_focus">1</property>
-              <property name="label" translatable="yes">Nome do modelo</property>
-              <layout>
-                <property name="column">0</property>
-                <property name="row">0</property>
-              </layout>
-            </object>
-          </child>
-          <child>
-            <object class="GtkEntry" id="ent_dialog_longitude">
-              <property name="visible">1</property>
-              <layout>
-                <property name="column">1</property>
-                <property name="row">2</property>
-              </layout>
-            </object>
-          </child>
-        </object>
+		  <object class="GtkGrid">
+		    <property name="visible">1</property>
+		    <property name="can_focus">1</property>
+		    <property name="margin-start">10</property>
+		    <property name="margin-end">10</property>
+		    <property name="margin_top">10</property>
+		    <property name="margin_bottom">10</property>
+		    <property name="row_spacing">2</property>
+		    <property name="column_spacing">2</property>
+		    <property name="column_homogeneous">1</property>
+		    <child>
+		      <object class="GtkLabel">
+		        <property name="visible">1</property>
+		        <property name="can_focus">1</property>
+		        <property name="label" translatable="yes">Expressão para longitude</property>
+		        <layout>
+		          <property name="column">0</property>
+		          <property name="row">2</property>
+		        </layout>
+		      </object>
+		    </child>
+		    <child>
+		      <object class="GtkEntry" id="ent_dialog_perfil">
+		        <property name="visible">1</property>
+		        <layout>
+		          <property name="column">1</property>
+		          <property name="row">0</property>
+		        </layout>
+		      </object>
+		    </child>
+		    <child>
+		      <object class="GtkLabel">
+		        <property name="visible">1</property>
+		        <property name="can_focus">1</property>
+		        <property name="label" translatable="yes">Expressão para latitude</property>
+		        <layout>
+		          <property name="column">0</property>
+		          <property name="row">1</property>
+		        </layout>
+		      </object>
+		    </child>
+		    <child>
+		      <object class="GtkEntry" id="ent_dialog_latitude">
+		        <property name="visible">1</property>
+		        <layout>
+		          <property name="column">1</property>
+		          <property name="row">1</property>
+		        </layout>
+		      </object>
+		    </child>
+		    <child>
+		      <object class="GtkLabel">
+		        <property name="visible">1</property>
+		        <property name="can_focus">1</property>
+		        <property name="label" translatable="yes">Nome do modelo</property>
+		        <layout>
+		          <property name="column">0</property>
+		          <property name="row">0</property>
+		        </layout>
+		      </object>
+		    </child>
+		    <child>
+		      <object class="GtkEntry" id="ent_dialog_longitude">
+		        <property name="visible">1</property>
+		        <layout>
+		          <property name="column">1</property>
+		          <property name="row">2</property>
+		        </layout>
+		      </object>
+		    </child>
+		  </object>
     </child>
   </object>
 </interface>

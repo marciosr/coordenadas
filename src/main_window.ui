@@ -136,7 +136,7 @@ A codificação deverá ser UTF-8.</property>
                     <child>
                       <object class="GtkLabel">
                         <property name="can_focus">1</property>
-                        <property name="label" translatable="yes">Nome do arquivo de saída (.csv)</property>
+                        <property name="label" translatable="yes">Salva como:</property>
                         <layout>
                           <property name="column">0</property>
                           <property name="row">6</property>
@@ -144,9 +144,10 @@ A codificação deverá ser UTF-8.</property>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="ent_saida">
-                        <property name="tooltip_text" translatable="yes">Informe o nome para o arquivo a ser gerado</property>
-                        <property name="text" translatable="yes">planilha.csv</property>
+                      <object class="GtkEntry" id="ent_planilha">
+                        <property name="tooltip_text" translatable="yes">Confira o arquivo e diretório escolhidos!</property>
+                        <property name="text" translatable="no">planilha.csv</property>
+                        <property name="can_focus">0</property>
                         <layout>
                           <property name="column">1</property>
                           <property name="row">6</property>

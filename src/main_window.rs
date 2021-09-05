@@ -20,7 +20,7 @@ pub struct MainWindow {
 	pub window:							ApplicationWindow,
 	pub ent_latitude:				Entry,
 	pub ent_longitude:			Entry,
-	pub ent_saida:					Entry,
+	pub ent_planilha:					Entry,
 	pub bt_fechar:					Button,
 	pub bt_run:							Button,
 	pub bt_entrada:					Button,
@@ -41,7 +41,7 @@ impl MainWindow {
 		get_widget!(glade, ApplicationWindow, window);
 		get_widget!(glade, Entry, ent_latitude);
 		get_widget!(glade, Entry, ent_longitude);
-		get_widget!(glade, Entry, ent_saida);
+		get_widget!(glade, Entry, ent_planilha);
 		get_widget!(glade, Button, bt_fechar);
 		get_widget!(glade, Button, bt_run);
 		get_widget!(glade, Button, bt_entrada);
@@ -62,7 +62,7 @@ impl MainWindow {
 			window,
 			ent_latitude,
 			ent_longitude,
-			ent_saida,
+			ent_planilha,
 			bt_fechar,
 			bt_run,
 			bt_entrada,
@@ -153,6 +153,7 @@ impl MainWindow {
 		{
 			let uri_clone = uri_saida.clone();
 			let window = self.window.clone();
+			let ent_planilha_clone = self.ent_planilha.clone();
 
 			self.bt_saida.connect_clicked(move|_|{
 				println!("Teste do callback antes de criar filechooser");
@@ -160,11 +161,12 @@ impl MainWindow {
 				let file_chooser = FileChooserDialog::new(
 					Some("Escolha o diretório para salvar"),
 					Some(&window),
-					gtk::FileChooserAction::SelectFolder,
+					gtk::FileChooserAction::Save,
 					&[("Open", gtk::ResponseType::Ok), ("Cancel", gtk::ResponseType::Cancel)],
 				);
 
 				let uri_clone2 = uri_clone.clone();
+				let ent_planilha_clone2 = ent_planilha_clone.clone();
 
 				file_chooser.connect_response(move |d: &FileChooserDialog, response: ResponseType| {
 				let caminho = match response {
@@ -173,6 +175,7 @@ impl MainWindow {
 						print!("Conteúdo de file {:?}", d.file());
 						let full_path = file.path().expect("Couldn't get file path");
 						// let file = std::fs::File::open (&full_path.as_path()).expect("Couldn't open file");
+						ent_planilha_clone2.set_text(full_path.to_str().unwrap());
 						Some(full_path)
 					},
 						_ => None,
@@ -197,7 +200,7 @@ impl MainWindow {
 			// let bt_saida_clone = self.bt_saida.clone();
 			let ent_latitude_clone = self.ent_latitude.clone();
 			let ent_longitude_clone = self.ent_longitude.clone();
-			let ent_saida_clone = self.ent_saida.clone();
+			//let ent_saida_clone = self.ent_saida.clone();
 			let rv_notifica_clone = self.rv_notifica.clone();
 
 			let lb_notifica_clone = self.lb_notifica.clone();
@@ -214,9 +217,9 @@ impl MainWindow {
 
 				//println!("\n\n** TESTE 2 {:?}", &uri_clone);
 
-				if Dados::check(&*uri_entrada_clone.borrow(), &*uri_saida_clone.borrow(), &ent_latitude_clone, &ent_longitude_clone, &ent_saida_clone, &rv_notifica_clone, &lb_notifica_clone) {
+				if Dados::check(&*uri_entrada_clone.borrow(), &*uri_saida_clone.borrow(), &ent_latitude_clone, &ent_longitude_clone, &rv_notifica_clone, &lb_notifica_clone) {
 
-				 	let dados = Dados::new(&uri_entrada_clone2, &uri_saida_clone2, &ent_latitude_clone, &ent_longitude_clone, &ent_saida_clone);
+				 	let dados = Dados::new(&uri_entrada_clone2, &uri_saida_clone2, &ent_latitude_clone, &ent_longitude_clone);
 				 	let texto = fs::read_to_string(&*dados.uri_entrada.borrow());
 
 				 	match texto {
