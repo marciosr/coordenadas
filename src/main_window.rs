@@ -16,7 +16,7 @@ use crate::frontend_data_check::Dados;
 use crate::backend::*;
 
 pub struct MainWindow {
-	pub ui:							Builder,
+	pub ui:									Builder,
 	pub window:							ApplicationWindow,
 	pub ent_latitude:				Entry,
 	pub ent_longitude:			Entry,
