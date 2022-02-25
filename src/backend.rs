@@ -64,8 +64,16 @@ pub fn gera_csv ( vec: Vec<String>,
 	let mut wtr = Writer::from_path(uri2)?;
 	wtr.write_record(&["Latitude","Longitude"])?;
 
-	for i in 0..vec.len() {
-		wtr.write_record(&[vec[i].as_str(),vec1[i].as_str()]).expect("Não foi possível gravar os dados do vetor");
+	if vec.len() == vec1.len() {
+
+		for i in 0..vec.len() {
+			wtr.write_record(&[vec[i].as_str(),vec1[i].as_str()]).expect("Não foi possível gravar os dados do vetor");
+		}
+	} else {
+		println!("Há números diferentes de pontos entre a latitude e longitude. Revise os dados!
+		\nvec: {}
+		\nvec1: {}",
+		vec.len(), vec1.len());
 	}
 
 	wtr.flush()?;
