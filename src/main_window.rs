@@ -213,16 +213,27 @@ impl MainWindow {
 
 				 	match texto {
 				 		Ok(_)	=> {
-						 	analisa_texto (	&*dados.uri_entrada.borrow(),
+              let ret = analisa_texto (	&*dados.uri_entrada.borrow(),
 						 									&dados.uri_saida,
 						 									dados.latitude,
-						 									dados.longitude)
-						 									.expect("Não foi possível carregar o arquivo de texto");
+						 									dados.longitude);
+						 												//.expect("Não foi possível carregar o arquivo de texto") {
+				 		  match ret {
+						 	  true => {},
+						 	  false => {
+                    lb_notifica_clone.set_label (
+                      "Números direfentes de longitudes e latitudes."
+                      );
+                    rv_notifica_clone.set_reveal_child(true);
+						 	  }
+						 	}
+						 	//println!("Retorno da função analisa texto: {:?}", a);
 				 		},
 				 		Err(e)		=> {
 				 			println!("Erro no processamento do texto: {}", e);
-				 			lb_notifica_clone.set_label("A codificação do arquivo de entrada deve ser UTF-8!
-				 																	\nConverta-o em um editor de texto.");
+				 			lb_notifica_clone.set_label(
+				 			  "A codificação do arquivo de entrada deve ser UTF-8!\nConverta-o em um editor de texto."
+				 			  );
 				 			rv_notifica_clone.set_reveal_child(true);
 				 		},
 				 	}
