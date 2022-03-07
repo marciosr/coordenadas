@@ -17,7 +17,8 @@ pub fn analisa_texto(
     uri_saida: &PathBuf,
     expressao_n: String,
     expressao_e: String,
-) -> bool {
+    ) -> bool {
+
     let texto = fs::read_to_string(uri_entrada);
     let text = &String::from(texto.unwrap());
 

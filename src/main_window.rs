@@ -16,21 +16,21 @@ use crate::frontend_data_check::Dados;
 use crate::backend::*;
 
 pub struct MainWindow {
-	pub ui:									Builder,
-	pub window:							ApplicationWindow,
-	pub ent_latitude:				Entry,
-	pub ent_longitude:			Entry,
-	pub ent_planilha:				Entry,
-	pub bt_fechar:					Button,
-	pub bt_run:							Button,
-	pub bt_entrada:					Button,
-	pub bt_saida:						Button,
+	pub ui:					Builder,
+	pub window:				ApplicationWindow,
+	pub ent_latitude:		Entry,
+	pub ent_longitude:		Entry,
+	pub ent_planilha:		Entry,
+	pub bt_fechar:			Button,
+	pub bt_run:				Button,
+	pub bt_entrada:			Button,
+	pub bt_saida:			Button,
 	pub bt_fecha_notifica:	Button,
-	pub rv_notifica:				Revealer,
-	pub lb_notifica:				Label,
-	pub cb_perfis:					ComboBoxText,
-	pub bt_ad:							Button,
-	pub bt_rm:							Button
+	pub rv_notifica:		Revealer,
+	pub lb_notifica:		Label,
+	pub cb_perfis:			ComboBoxText,
+	pub bt_ad:				Button,
+	pub bt_rm:				Button
 }
 
 impl MainWindow {
@@ -39,19 +39,19 @@ impl MainWindow {
 		let ui = gtk::Builder::from_string(ui_src);
 
 		get_widget!(ui, ApplicationWindow,	window);
-		get_widget!(ui, Entry, 							ent_latitude);
-		get_widget!(ui, Entry,							ent_longitude);
-		get_widget!(ui, Entry,							ent_planilha);
-		get_widget!(ui, Button,							bt_fechar);
-		get_widget!(ui, Button,							bt_run);
-		get_widget!(ui, Button,							bt_entrada);
-		get_widget!(ui, Button,							bt_saida);
-		get_widget!(ui, Button,							bt_fecha_notifica);
-		get_widget!(ui, Revealer,						rv_notifica);
-		get_widget!(ui, Label,							lb_notifica);
-		get_widget!(ui, ComboBoxText,				cb_perfis);
-		get_widget!(ui, Button,							bt_ad);
-		get_widget!(ui, Button,							bt_rm);
+		get_widget!(ui, Entry, ent_latitude);
+		get_widget!(ui, Entry, ent_longitude);
+		get_widget!(ui, Entry, ent_planilha);
+		get_widget!(ui, Button, bt_fechar);
+		get_widget!(ui, Button, bt_run);
+		get_widget!(ui, Button, bt_entrada);
+		get_widget!(ui, Button, bt_saida);
+		get_widget!(ui, Button, bt_fecha_notifica);
+		get_widget!(ui, Revealer, rv_notifica);
+		get_widget!(ui, Label, lb_notifica);
+		get_widget!(ui, ComboBoxText, cb_perfis);
+		get_widget!(ui, Button, bt_ad);
+		get_widget!(ui, Button, bt_rm);
 
 		MainWindow {
 			ui,
@@ -104,7 +104,9 @@ impl MainWindow {
 		self.cb_perfis.set_active(Some(0));
 
 		let nome_perfil = self.cb_perfis.active_text().unwrap(); // Possível problema de unwrap sobre None
-		atualiza_campos(nome_perfil.to_string(), &self.ent_latitude, &self.ent_longitude, &perfis);
+		atualiza_campos( nome_perfil.to_string(),
+		                 &self.ent_latitude,
+		                 &self.ent_longitude, &perfis);
 
 		let window = self.window.clone();
 		let uri_entrada: Rc<RefCell<PathBuf>> = Rc::new(RefCell::new(PathBuf::new()));
@@ -198,25 +200,25 @@ impl MainWindow {
 			self.bt_run.connect_clicked(move |_| {
 
 				if Dados::check(&*uri_entrada_clone.borrow(),
-												&*uri_saida_clone.borrow(),
-												&ent_latitude_clone,
-												&ent_longitude_clone,
-												&rv_notifica_clone,
-												&lb_notifica_clone) {
+								&*uri_saida_clone.borrow(),
+								&ent_latitude_clone,
+								&ent_longitude_clone,
+								&rv_notifica_clone,
+								&lb_notifica_clone) {
 
-				 	let dados = Dados::new(&uri_entrada_clone2,
-				 												 &uri_saida_clone2,
-				 												 &ent_latitude_clone,
-				 												 &ent_longitude_clone);
+				 	let dados = Dados::new( &uri_entrada_clone2,
+				 							&uri_saida_clone2,
+				 							&ent_latitude_clone,
+				 							&ent_longitude_clone);
 
 				 	let texto = fs::read_to_string(&*dados.uri_entrada.borrow());
 
 				 	match texto {
 				 		Ok(_)	=> {
               let ret = analisa_texto (	&*dados.uri_entrada.borrow(),
-						 									&dados.uri_saida,
-						 									dados.latitude,
-						 									dados.longitude);
+                                        &dados.uri_saida,
+						 				dados.latitude,
+						 				dados.longitude);
 						 												//.expect("Não foi possível carregar o arquivo de texto") {
 				 		  match ret {
 						 	  true => {},
@@ -259,9 +261,9 @@ impl MainWindow {
 					Some(_texto) => {
 						let nome_perfil = cb.active_text().unwrap();
 						atualiza_campos(nome_perfil.to_string(),
-														&ent_1,
-														&ent_2,
-														&perfis_clone);
+										&ent_1,
+										&ent_2,
+										&perfis_clone);
 					},
 					None => println!("Não há texto ativo"),
 				}
@@ -293,24 +295,24 @@ impl MainWindow {
 																.text().to_string();
 
 							adiciona_perfil (	nome_perfil.to_string(),
-																&cadastra_clone.ent_dialog_latitude
-																.text().to_string(),
-																&cadastra_clone.ent_dialog_longitude
-																.text().to_string(),
-																&perfis_clone1);
+												&cadastra_clone.ent_dialog_latitude
+												.text().to_string(),
+												&cadastra_clone.ent_dialog_longitude
+												.text().to_string(),
+												&perfis_clone1);
 
 							cb_perfis_clone2.append_text(nome_perfil);
 							println!(	"Teste do botão fecha diálogo
-												\nO nome do perfil dentro do closure do bt-fecha é: {}
-												\nA expressão da latitude é {}
-												\nA expressão da longitude é {}
-												\no conteúdo dos perfiles no closure é: {:?}",
-												nome_perfil,
-												&cadastra_clone.ent_dialog_latitude
-																			 .text().to_string(),
-												&cadastra_clone.ent_dialog_longitude
-															 				 .text().to_string(),
-												&perfis_clone1
+										\nO nome do perfil dentro do closure do bt-fecha é: {}
+										\nA expressão da latitude é {}
+										\nA expressão da longitude é {}
+										\no conteúdo dos perfiles no closure é: {:?}",
+										nome_perfil,
+										&cadastra_clone.ent_dialog_latitude
+										    .text().to_string(),
+											&cadastra_clone.ent_dialog_longitude
+											.text().to_string(),
+											&perfis_clone1
 							);
 
 							cadastra_clone.dialog.close();
@@ -367,7 +369,8 @@ impl MainWindow {
 }
 
 pub fn inicia_combo (	combo: &ComboBoxText,
-											perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>>) {
+						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>>) {
+
 	let map = perfis.borrow();
 	for (key, _value) in map.iter() {
 		combo.append_text(&key);
@@ -375,18 +378,18 @@ pub fn inicia_combo (	combo: &ComboBoxText,
 }
 
 pub fn atualiza_campos(	nome_perfil: String,
-												ent_latitude: &Entry,
-												ent_longitude: &Entry,
-												perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
+						ent_latitude: &Entry,
+						ent_longitude: &Entry,
+						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
 
-	set_entrys(&ent_latitude,
-						 &ent_longitude,
-						 &String::from(nome_perfil),
-						 perfis);
+	set_entrys( &ent_latitude,
+        		&ent_longitude,
+				&String::from(nome_perfil),
+				perfis);
 }
 
 pub fn atualiza_combo (	combo: &ComboBoxText,
-												perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
+						perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
 	combo.remove_all();
 
 	let map = perfis.borrow();
@@ -397,9 +400,9 @@ pub fn atualiza_combo (	combo: &ComboBoxText,
 }
 
 pub fn set_entrys (	entry_latitude: &Entry,
-										entry_longitude: &Entry,
-										nome_perfil: &String,
-										perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
+					entry_longitude: &Entry,
+					nome_perfil: &String,
+					perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>> ) {
 
 	let map = perfis.borrow();
 
