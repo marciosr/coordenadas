@@ -6,7 +6,6 @@ mod dialogo_cadastra_perfis;
 mod frontend_data_check;
 mod backend;
 
-
 use crate::main_window::MainWindow;
 use gtk::Application;
 use gtk::prelude::*;
@@ -27,4 +26,3 @@ fn main() {
 	let ret = application.run();
 	std::process::exit(ret);
 }
-

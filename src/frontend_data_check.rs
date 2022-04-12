@@ -8,19 +8,18 @@ use std::path::PathBuf;
 use gtk::prelude::EntryExt;
 use gtk::prelude::*;
 
-
 pub struct Dados<'a> {
 	pub uri_entrada:	&'a Rc<RefCell<PathBuf>>,
 	pub uri_saida:		PathBuf,
-	pub latitude:			String,
+	pub latitude:		String,
 	pub longitude:		String,
 }
 
 impl <'a> Dados <'a> {
 		pub fn new (uri_entrada:	&'a Rc<RefCell<PathBuf>>,
-								uri_saidaa:		&Rc<RefCell<PathBuf>>,
-								ent_exp1:			&Entry,
-								ent_exp2:			&Entry )-> Dados<'a> {
+					uri_saidaa:		&Rc<RefCell<PathBuf>>,
+					ent_exp1:		&Entry,
+					ent_exp2:		&Entry )-> Dados<'a> {
 
 		println!("URI da entrada {:?}\n", uri_saidaa);
 
@@ -37,11 +36,11 @@ impl <'a> Dados <'a> {
 	}
 
 	pub fn check(	uri_entrada:	&PathBuf,
-								uri_saida:		&PathBuf,
-								ent_exp1:			&Entry,
-								ent_exp2:			&Entry,
-								rv_notifica:	&Revealer,
-								lb_notifica: 	&Label ) -> bool {
+					uri_saida:		&PathBuf,
+					ent_exp1:		&Entry,
+					ent_exp2:		&Entry,
+					rv_notifica:	&Revealer,
+					lb_notifica: 	&Label ) -> bool {
 
 			let mut resultado: bool = false;
 
@@ -73,5 +72,3 @@ impl <'a> Dados <'a> {
 		resultado
 	}
 }
-
-

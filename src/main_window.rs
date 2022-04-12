@@ -38,7 +38,7 @@ impl MainWindow {
 		let ui_src = include_str!("main_window.ui");
 		let ui = gtk::Builder::from_string(ui_src);
 
-		get_widget!(ui, ApplicationWindow,	window);
+		get_widget!(ui, ApplicationWindow, window);
 		get_widget!(ui, Entry, ent_latitude);
 		get_widget!(ui, Entry, ent_longitude);
 		get_widget!(ui, Entry, ent_planilha);
@@ -215,28 +215,28 @@ impl MainWindow {
 
 				 	match texto {
 				 		Ok(_)	=> {
-              let ret = analisa_texto (	&*dados.uri_entrada.borrow(),
-                                        &dados.uri_saida,
-						 				dados.latitude,
-						 				dados.longitude);
-						 												//.expect("Não foi possível carregar o arquivo de texto") {
-				 		  match ret {
-						 	  true => {},
-						 	  false => {
-                    lb_notifica_clone.set_label (
-                      "Números direfentes de longitudes e latitudes."
-                      );
-                    rv_notifica_clone.set_reveal_child(true);
-						 	  }
-						 	}
+							let ret = analisa_texto (	&*dados.uri_entrada.borrow(),
+								&dados.uri_saida,
+								dados.latitude,
+								dados.longitude);
+								//.expect("Não foi possível carregar o arquivo de texto") {
+						match ret {
+							true => {},
+							false => {
+								lb_notifica_clone.set_label (
+								"Números direfentes de longitudes e latitudes."
+								);
+								rv_notifica_clone.set_reveal_child(true);
+							}
+						}
 						 	//println!("Retorno da função analisa texto: {:?}", a);
-				 		},
-				 		Err(e)		=> {
-				 			println!("Erro no processamento do texto: {}", e);
-				 			lb_notifica_clone.set_label(
-				 			  "A codificação do arquivo de entrada deve ser UTF-8!\nConverta-o em um editor de texto."
-				 			  );
-				 			rv_notifica_clone.set_reveal_child(true);
+				 	},
+				 		Err(e)	=> {
+							println!("Erro no processamento do texto: {}", e);
+							lb_notifica_clone.set_label(
+								"A codificação do arquivo de entrada deve ser UTF-8!\nConverta-o em um editor de texto."
+							 );
+							rv_notifica_clone.set_reveal_child(true);
 				 		},
 				 	}
 				} else { println!("Faltam parâmetros!"); }
@@ -267,10 +267,8 @@ impl MainWindow {
 					},
 					None => println!("Não há texto ativo"),
 				}
-
 			});
 		}
-
 		{
 			let cb_perfis_clone = self.cb_perfis.clone();
 			let perfis_clone0 = perfis.clone();
@@ -289,38 +287,38 @@ impl MainWindow {
 					if	&cadastra_clone.ent_dialog_latitude.text().to_string() == "" ||
 							&cadastra_clone.ent_dialog_longitude.text().to_string() == "" ||
 							&cadastra_clone.ent_dialog_perfil.text().to_string() == "" {
-						} else {
+					} else {
 
 							let nome_perfil =  &cadastra_clone.ent_dialog_perfil
 																.text().to_string();
 
-							adiciona_perfil (	nome_perfil.to_string(),
-												&cadastra_clone.ent_dialog_latitude
-												.text().to_string(),
-												&cadastra_clone.ent_dialog_longitude
-												.text().to_string(),
-												&perfis_clone1);
-
-							cb_perfis_clone2.append_text(nome_perfil);
-							println!(	"Teste do botão fecha diálogo
-										\nO nome do perfil dentro do closure do bt-fecha é: {}
-										\nA expressão da latitude é {}
-										\nA expressão da longitude é {}
-										\no conteúdo dos perfiles no closure é: {:?}",
-										nome_perfil,
-										&cadastra_clone.ent_dialog_latitude
-										    .text().to_string(),
-											&cadastra_clone.ent_dialog_longitude
-											.text().to_string(),
-											&perfis_clone1
+							adiciona_perfil (
+								nome_perfil.to_string(),
+								&cadastra_clone.ent_dialog_latitude
+									.text().to_string(),
+								&cadastra_clone.ent_dialog_longitude
+									.text().to_string(),
+								&perfis_clone1
 							);
 
+							cb_perfis_clone2.append_text(nome_perfil);
+							println!(
+								"Teste do botão fecha diálogo
+								\nO nome do perfil dentro do closure do bt-fecha é: {}
+								\nA expressão da latitude é {}
+								\nA expressão da longitude é {}
+								\no conteúdo dos perfiles no closure é: {:?}",
+								nome_perfil,
+								&cadastra_clone.ent_dialog_latitude
+								    .text().to_string(),
+								&cadastra_clone.ent_dialog_longitude
+									.text().to_string(),
+									&perfis_clone1
+							);
 							cadastra_clone.dialog.close();
 					}
 				});
-
 				cadastra.dialog.show();
-
 			});
 		}
 
@@ -421,4 +419,3 @@ pub fn adiciona_perfil (perfil_n: String,
 	let mut map: RefMut<_> = perfis.borrow_mut();
 	map.insert(perfil_n, expressoes);
 }
-

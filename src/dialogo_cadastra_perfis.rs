@@ -2,17 +2,16 @@ extern crate gtk;
 
 use gtk::prelude::*;
 use gtk::{Window, Entry, Button, HeaderBar};
-
 use std::rc::Rc;
 
 pub struct Cadastra {
-	pub dialog:								Window,
-	pub header:								HeaderBar,
+	pub dialog:					Window,
+	pub header:					HeaderBar,
 	pub ent_dialog_perfil:		Entry,
 	pub ent_dialog_latitude:	Entry,
 	pub ent_dialog_longitude:	Entry,
-	pub bt_fecha_dialogo:			Button,
-	pub bt_preencher:					Button
+	pub bt_fecha_dialogo:		Button,
+	pub bt_preencher:			Button
 }
 
 impl Cadastra {
@@ -21,7 +20,7 @@ impl Cadastra {
 		let ui = gtk::Builder::from_string(ui_src);
 
 		get_widget!(ui, Window,		dialog);
-		get_widget!(ui, HeaderBar,header);
+		get_widget!(ui, HeaderBar,	header);
 		get_widget!(ui, Entry, 		ent_dialog_perfil);
 		get_widget!(ui, Entry, 		ent_dialog_latitude);
 		get_widget!(ui, Entry, 		ent_dialog_longitude);
