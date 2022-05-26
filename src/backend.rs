@@ -127,7 +127,7 @@ pub fn popula_perfis() -> BTreeMap<String, Expressoes> {
 		longitude: String::from(r"[3-7]\dW\s[0-5]\d'\s[0-5]\d"),
 	};
 	let gms_neg = Expressoes {
-		latitude: String::from(r#"[+-]?[0-2]\d°[0-9]\d'[0-9]\d,\d{3}""#),
+		latitude: String::from(r#"[+-]?[0-2]\d°[0-9]\d'[0-9]\d[,.]\d{3}""#),
 		longitude: String::from(r#"[+-]?[3-4]\d°[0-9]\d'[0-9]\d[,.]?\d{3}""#),
 	};
 	let mut perfis = BTreeMap::new();
