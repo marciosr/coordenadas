@@ -1,31 +1,31 @@
 extern crate gtk;
-extern crate gio;
 
 use gtk::prelude::*;
-use gtk::{Window, Entry, Button};
-
+use gtk::{Window, Entry, Button, HeaderBar};
 use std::rc::Rc;
 
 pub struct Cadastra {
-	pub dialog:								Window,
+	pub dialog:					Window,
+	pub header:					HeaderBar,
 	pub ent_dialog_perfil:		Entry,
 	pub ent_dialog_latitude:	Entry,
 	pub ent_dialog_longitude:	Entry,
-	pub bt_fecha_dialogo:			Button,
-	pub bt_preencher:					Button
+	pub bt_fecha_dialogo:		Button,
+	pub bt_preencher:			Button
 }
 
 impl Cadastra {
 	pub fn new() -> Rc<Self> {
-		let glade_src = include_str!("dialogo_cadastra_perfis.glade");
-		let glade = gtk::Builder::from_string(glade_src);
-		let dialog: gtk::Window = glade.get_object("dialog").expect("Não foi possivel encontrar o widget");
+		let ui_src = include_str!("dialogo_cadastra_perfis.ui");
+		let ui = gtk::Builder::from_string(ui_src);
 
-		let ent_dialog_perfil: Entry = glade.get_object("ent_dialog_perfil").expect("Não foi possivel encontrar o widget");
-		let ent_dialog_latitude: Entry = glade.get_object("ent_dialog_latitude").expect("Não foi possivel encontrar o widget");
-		let ent_dialog_longitude: Entry = glade.get_object("ent_dialog_longitude").expect("Não foi possivel encontrar o widget");
-		let bt_fecha_dialogo: Button = glade.get_object("bt_fecha_dialogo").expect("Não foi possivel encontrar o widget");
-		let bt_preencher: Button = glade.get_object("bt_preencher").expect("Não foi possivel encontrar o widget");
+		get_widget!(ui, Window,		dialog);
+		get_widget!(ui, HeaderBar,	header);
+		get_widget!(ui, Entry, 		ent_dialog_perfil);
+		get_widget!(ui, Entry, 		ent_dialog_latitude);
+		get_widget!(ui, Entry, 		ent_dialog_longitude);
+		get_widget!(ui, Button, 	bt_fecha_dialogo);
+		get_widget!(ui, Button, 	bt_preencher);
 
 		{
 			let dialog_clone = dialog.clone();
@@ -36,6 +36,7 @@ impl Cadastra {
 
 		let cadastra = Rc::new(Self {
 			dialog,
+			header,
 			ent_dialog_perfil,
 			ent_dialog_latitude,
 			ent_dialog_longitude,
