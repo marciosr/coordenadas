@@ -91,7 +91,7 @@ impl MainWindow {
 		self.cb_perfis.set_id_column(1); // Garante que haja um perfil ativo, assim não havera o crash de unwrap() on None.
 		self.cb_perfis.set_active(Some(0));
 
-		let perfis = match self.cb_perfis.get_active_text() {
+		let perfis = match self.cb_perfis.active_text() {
 			Some(_ativo) => perfis,
 			None =>	{
 				let perfis_populados: Rc<RefCell<_>> = Rc::new(RefCell::new(popula_perfis()));
@@ -102,7 +102,7 @@ impl MainWindow {
 
 		self.cb_perfis.set_active(Some(0));
 
-		let nome_perfil = self.cb_perfis.get_active_text().unwrap(); // Possível problema de unwrap sobre None
+		let nome_perfil = self.cb_perfis.active_text().unwrap(); // Possível problema de unwrap sobre None
 		atualiza_campos(nome_perfil.to_string(), &self.ent_latitude, &self.ent_longitude, &perfis);
 
 		{ // Bloco de execussão da busca
@@ -154,9 +154,9 @@ impl MainWindow {
 			let perfis_clone = perfis.clone();
 
 			combo.connect_changed(move |cb| {
-				match cb.get_active_text() {
+				match cb.active_text() {
 					Some(_texto) => {
-						let nome_perfil = cb.get_active_text().unwrap();
+						let nome_perfil = cb.active_text().unwrap();
 						atualiza_campos(nome_perfil.to_string(), &ent_1, &ent_2, &perfis_clone);
 					},
 					None => println!("Não há texto ativo"),
@@ -182,19 +182,19 @@ impl MainWindow {
 				let perfis_clone1 = perfis_clone0.clone();
 				cadastra.bt_preencher.connect_clicked(move|_|{
 
-					if	&cadastra_clone.ent_dialog_latitude.get_text().to_string() == "" ||
-						&cadastra_clone.ent_dialog_longitude.get_text().to_string() == "" ||
-						&cadastra_clone.ent_dialog_perfil.get_text().to_string() == "" {
+					if	&cadastra_clone.ent_dialog_latitude.text().to_string() == "" ||
+						&cadastra_clone.ent_dialog_longitude.text().to_string() == "" ||
+						&cadastra_clone.ent_dialog_perfil.text().to_string() == "" {
 						} else {
 
 							let nome_perfil =  &cadastra_clone.ent_dialog_perfil
-																.get_text().to_string();
+																.text().to_string();
 
 							adiciona_perfil (	nome_perfil.to_string(),
 												&cadastra_clone.ent_dialog_latitude
-																.get_text().to_string(),
+																.text().to_string(),
 												&cadastra_clone.ent_dialog_longitude
-																.get_text().to_string(),
+																.text().to_string(),
 												&perfis_clone1
 											);
 							cb_perfis_clone2.append_text(nome_perfil);
@@ -204,9 +204,9 @@ impl MainWindow {
 								o conteúdo dos perfiles no closure é: {:?}",
 								nome_perfil,
 								&cadastra_clone.ent_dialog_latitude
-																.get_text().to_string(),
+																.text().to_string(),
 								&cadastra_clone.ent_dialog_longitude
-																.get_text().to_string(),
+																.text().to_string(),
 								&perfis_clone1
 							);
 
@@ -252,7 +252,7 @@ impl MainWindow {
 
 			self.bt_rm.connect_clicked(move|_| {
 				//remove_perfil(&combo, &perfis_clone);
-				match combo.get_active_text() {
+				match combo.active_text() {
 					Some(perfil_ativo) => {
 						remove_perfil (perfil_ativo.to_string(), &perfis_clone);
 						atualiza_combo (&combo, &perfis_clone);
