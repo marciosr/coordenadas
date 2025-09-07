@@ -1,22 +1,21 @@
-use std::cell::{RefCell, RefMut};
+use csv::*;
+use regex::Regex;
+use serde::{Deserialize, Serialize};
+// use std::cell::{RefCell, RefMut};
 use std::collections::BTreeMap;
 use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
-use std::rc::Rc;
+// use std::rc::Rc;
 use std::string::String;
-use csv::*;
-use regex::Regex;
-use serde::{Deserialize, Serialize};
 
 pub fn analisa_texto(
 	uri_entrada: &PathBuf,
 	uri_saida: &PathBuf,
 	expressao_n: String,
 	expressao_e: String,
-	) -> bool {
-
+) -> bool {
 	let texto = fs::read_to_string(uri_entrada);
 	let text = &String::from(texto.unwrap());
 
@@ -98,7 +97,7 @@ fn serializa(map: &BTreeMap<String, Expressoes>) -> String {
 }
 
 pub fn serializa_yaml(map: &BTreeMap<String, Expressoes>) -> String {
-	serde_yaml::to_string(&map).unwrap()
+	serde_yml::to_string(&map).unwrap()
 }
 
 #[allow(dead_code)]
@@ -107,7 +106,7 @@ pub fn desserializa(serializado: String) -> BTreeMap<String, Expressoes> {
 }
 
 pub fn desserializa_yaml(serializado: String) -> BTreeMap<String, Expressoes> {
-	serde_yaml::from_str(&serializado).unwrap()
+	serde_yml::from_str(&serializado).unwrap()
 }
 
 pub fn popula_perfis() -> BTreeMap<String, Expressoes> {
@@ -139,7 +138,7 @@ pub fn popula_perfis() -> BTreeMap<String, Expressoes> {
 	perfis
 }
 
-pub fn remove_perfil(perfil_atual: String, perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>>) {
-	let mut map: RefMut<_> = perfis.borrow_mut();
-	map.remove(perfil_atual.as_str());
-}
+// pub fn remove_perfil(perfil_atual: String, perfis: &Rc<RefCell<BTreeMap<String, Expressoes>>>) {
+// 	let mut map: RefMut<_> = perfis.borrow_mut();
+// 	map.remove(perfil_atual.as_str());
+// }
